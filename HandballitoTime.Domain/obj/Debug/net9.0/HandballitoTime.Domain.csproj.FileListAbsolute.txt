@@ -1,0 +1,11 @@
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\bin\Debug\net9.0\HandballitoTime.Domain.deps.json
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\bin\Debug\net9.0\HandballitoTime.Domain.dll
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\bin\Debug\net9.0\HandballitoTime.Domain.pdb
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\obj\Debug\net9.0\HandballitoTime.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\obj\Debug\net9.0\HandballitoTime.Domain.AssemblyInfoInputs.cache
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\obj\Debug\net9.0\HandballitoTime.Domain.AssemblyInfo.cs
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\obj\Debug\net9.0\HandballitoTime.Domain.csproj.CoreCompileInputs.cache
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\obj\Debug\net9.0\HandballitoTime.Domain.dll
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\obj\Debug\net9.0\refint\HandballitoTime.Domain.dll
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\obj\Debug\net9.0\HandballitoTime.Domain.pdb
+C:\Projects\Cositas\handballito-app\HandballitoTime.Domain\obj\Debug\net9.0\ref\HandballitoTime.Domain.dll
