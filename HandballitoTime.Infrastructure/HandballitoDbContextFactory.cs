@@ -18,8 +18,12 @@ namespace HandballitoTime.Infrastructure
 
             // Get connection string from configuration or environment
             var connectionString = config.GetConnectionString("DefaultConnection")
-                ?? config["DATABASE_URL"] // For Railway or other env-based setups
-                ?? "Host=localhost;Port=5432;Database=handballito;Username=juli;Password=mypassword"; // fallback
+                ?? config["DATABASE_URL"]; // For Railway or other env-based setups;
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Could not find a connection string.");
+            }
 
             var optionsBuilder = new DbContextOptionsBuilder<HandballitoDbContext>();
             optionsBuilder.UseNpgsql(connectionString);

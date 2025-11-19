@@ -63,6 +63,16 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+if (!app.Environment.IsDevelopment())
+{
+    //Apply migrations at startup
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<HandballitoDbContext>();
+        db.Database.Migrate();
+    }
+}
+
 app.Run();
 
 
