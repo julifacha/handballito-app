@@ -31,7 +31,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://handballito-app.vercel.app/")
+        policy.WithOrigins("http://localhost:3000", "https://handballito-app.vercel.app")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
