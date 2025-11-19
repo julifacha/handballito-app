@@ -37,7 +37,7 @@ namespace HandballitoTime.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("HandballitoTime.Domain.Entities.Match", b =>
@@ -71,7 +71,7 @@ namespace HandballitoTime.Infrastructure.Migrations
 
                     b.HasIndex("WinnerTeamId");
 
-                    b.ToTable("Matches");
+                    b.ToTable("Matches", (string)null);
                 });
 
             modelBuilder.Entity("HandballitoTime.Domain.Entities.Player", b =>
@@ -86,7 +86,7 @@ namespace HandballitoTime.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Players");
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("HandballitoTime.Domain.Entities.Team", b =>
@@ -97,7 +97,7 @@ namespace HandballitoTime.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("PlayerTeam", b =>
@@ -112,7 +112,7 @@ namespace HandballitoTime.Infrastructure.Migrations
 
                     b.HasIndex("TeamsId");
 
-                    b.ToTable("PlayerTeam");
+                    b.ToTable("PlayerTeam", (string)null);
                 });
 
             modelBuilder.Entity("HandballitoTime.Domain.Entities.Match", b =>

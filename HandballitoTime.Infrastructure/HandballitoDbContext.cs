@@ -46,15 +46,5 @@ namespace HandballitoTime.Infrastructure
         }
     }
 
-    public class HandballitoDbContextFactory : IDesignTimeDbContextFactory<HandballitoDbContext>
-    {
-        public HandballitoDbContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<HandballitoDbContext>();
-            // Use your connection string here (adjust as needed)
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=handballito;Username=juli;Password=mypassword");
-
-            return new HandballitoDbContext(optionsBuilder.Options);
-        }
-    }
+    
 }
