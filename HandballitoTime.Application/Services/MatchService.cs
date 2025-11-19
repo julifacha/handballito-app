@@ -120,6 +120,7 @@ namespace HandballitoTime.Application.Services
         {
             var matches = await _db.Matches
                 .Include(m => m.WhiteTeam).ThenInclude(t => t.Players)
+                .Include(m => m.BlackTeam).ThenInclude(t => t.Players)
                 .Include(m => m.Location)
                 .ToListAsync();
 

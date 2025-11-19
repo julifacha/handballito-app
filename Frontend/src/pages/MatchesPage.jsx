@@ -143,11 +143,6 @@ function MatchesPage() {
     return player ? player.name : 'Desconocido';
   };
 
-  const getLocationName = (locationId) => {
-    const location = locations.find(l => l.id === locationId);
-    return location ? location.name : 'Desconocido';
-  };
-
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     const date = new Date(dateString);
@@ -292,13 +287,13 @@ function MatchesPage() {
                     </button>
                   </div>
                   <div className="match-details">
-                    <p><strong>Cancha:</strong> {getLocationName(match.locationId)}</p>
+                    <p><strong>Cancha:</strong> {match.locationName}</p>
                     <div className="match-teams">
                       <div className="team-info">
                         <strong>Equipo Blanco:</strong>
-                        {match.whiteTeamPlayerIds && match.whiteTeamPlayerIds.length > 0 ? (
+                        {match.whiteTeam.playerIds && match.whiteTeam.playerIds.length > 0 ? (
                           <ul>
-                            {match.whiteTeamPlayerIds.map((playerId) => (
+                            {match.whiteTeam.playerIds.map((playerId) => (
                               <li key={playerId}>{getPlayerName(playerId)}</li>
                             ))}
                           </ul>
@@ -308,9 +303,9 @@ function MatchesPage() {
                       </div>
                       <div className="team-info">
                         <strong>Equipo Negro:</strong>
-                        {match.blackTeamPlayerIds && match.blackTeamPlayerIds.length > 0 ? (
+                        {match.blackTeam.playerIds && match.blackTeam.playerIds.length > 0 ? (
                           <ul>
-                            {match.blackTeamPlayerIds.map((playerId) => (
+                            {match.blackTeam.playerIds.map((playerId) => (
                               <li key={playerId}>{getPlayerName(playerId)}</li>
                             ))}
                           </ul>
