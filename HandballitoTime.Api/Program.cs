@@ -44,7 +44,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // Use CORS policy
-app.UseCors("AllowLocal3000");
+app.UseCors("AllowFrontend");
 
 app.UseSwagger();
 app.UseSwaggerUI();
