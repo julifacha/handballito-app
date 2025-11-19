@@ -29,9 +29,9 @@ builder.Services.AddScoped<ILocationService, LocationService>();
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocal3000", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins("http://localhost:3000", "https://handballito-app.vercel.app/")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
