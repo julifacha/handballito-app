@@ -7,7 +7,6 @@ using HandballitoTime.Application.Services.Interfaces;
 using HandballitoTime.Infrastructure;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -25,6 +24,8 @@ builder.Services.Configure<RouteOptions>(options => options.SetParameterPolicy<R
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+
+builder.Services.AddScoped<IMatchImageService, MatchImageService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -78,7 +79,10 @@ app.Run();
 
 [JsonSerializable(typeof(CreateMatchDto))]
 [JsonSerializable(typeof(UpdateMatchDto))]
-[JsonSerializable(typeof(MatchDto))] // or whatever your output DTO is
+[JsonSerializable(typeof(MatchDto))]
+[JsonSerializable(typeof(CreateMatchFromTextDto))]
+[JsonSerializable(typeof(CreateMatchFromImageResultDto))]
+[JsonSerializable(typeof(ExtractedMatchData))]
 [JsonSerializable(typeof(CreatePlayerDto))]
 [JsonSerializable(typeof(PlayerDto))]
 [JsonSerializable(typeof(CreateLocationDto))]

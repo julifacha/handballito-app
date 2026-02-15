@@ -33,6 +33,26 @@ public static class MatchesEndpoints
             return Results.Ok(matches);
         });
 
+        group.MapPost("/from-text", async (IMatchImageService imageService, CreateMatchFromTextDto dto) =>
+        {
+            if (string.IsNullOrWhiteSpace(dto.Text))
+                return Results.BadRequest("Text is required.");
+
+            try
+            {
+                var result = await imageService.CreateMatchFromTextAsync(dto.Text);
+                return Results.Created($"/api/matches/{result.Match.Id}", result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        });
+
         return group;
     }
 }
