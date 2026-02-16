@@ -1,3 +1,4 @@
+using HandballitoTime.Api.Configuration;
 using HandballitoTime.Api.Endpoints;
 using HandballitoTime.Application.Dtos.Locations;
 using HandballitoTime.Application.Dtos.Matches;
@@ -8,6 +9,7 @@ using HandballitoTime.Infrastructure;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Telegram.Bot;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -25,7 +27,13 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 
-builder.Services.AddScoped<IMatchImageService, MatchImageService>();
+// Telegram bot
+builder.Services.Configure<TelegramOptions>(builder.Configuration.GetSection("Telegram"));
+var telegramToken = builder.Configuration.GetSection("Telegram")["BotToken"];
+if (!string.IsNullOrEmpty(telegramToken))
+{
+    builder.Services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(telegramToken));
+}
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -54,6 +62,7 @@ app.MapControllers();
 app.MapMatchesEndpoints();
 app.MapPlayersEndpoints();
 app.MapLocationsEndpoints();
+app.MapTelegramEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
@@ -74,7 +83,20 @@ if (!app.Environment.IsDevelopment())
     }
 }
 
-app.Run();
+// Register Telegram webhook on startup
+var tgWebhookUrl = app.Configuration.GetSection("Telegram")["WebhookUrl"];
+if (!string.IsNullOrEmpty(telegramToken) && !string.IsNullOrEmpty(tgWebhookUrl))
+{
+    var bot = app.Services.GetRequiredService<ITelegramBotClient>();
+    var secretToken = app.Configuration.GetSection("Telegram")["SecretToken"];
+
+    var webhookUrl = $"{tgWebhookUrl.TrimEnd('/')}/api/telegram/webhook";
+    await bot.SetWebhook(
+        url: webhookUrl,
+        secretToken: secretToken);
+}
+
+await app.RunAsync();
 
 
 [JsonSerializable(typeof(CreateMatchDto))]

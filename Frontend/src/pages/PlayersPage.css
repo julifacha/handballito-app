@@ -149,6 +149,12 @@ th {
   border-bottom: 2px solid rgba(100, 108, 255, 0.3);
 }
 
+th:last-child,
+td:last-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
 td {
   padding: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);

@@ -289,8 +289,11 @@ function MatchesPage() {
                   <div className="match-details">
                     <p><strong>Cancha:</strong> {match.locationName}</p>
                     <div className="match-teams">
-                      <div className="team-info">
-                        <strong>Equipo Blanco:</strong>
+                      <div className={`team-info ${match.winnerTeamId === match.whiteTeam.id ? 'team-winner' : ''}`}>
+                        <strong>
+                          Equipo Blanco
+                          {match.winnerTeamId === match.whiteTeam.id && <span className="winner-badge">W</span>}
+                        </strong>
                         {match.whiteTeam.playerIds && match.whiteTeam.playerIds.length > 0 ? (
                           <ul>
                             {match.whiteTeam.playerIds.map((playerId) => (
@@ -301,8 +304,11 @@ function MatchesPage() {
                           <p>No hay jugadores asignados</p>
                         )}
                       </div>
-                      <div className="team-info">
-                        <strong>Equipo Negro:</strong>
+                      <div className={`team-info ${match.winnerTeamId === match.blackTeam.id ? 'team-winner' : ''}`}>
+                        <strong>
+                          Equipo Negro
+                          {match.winnerTeamId === match.blackTeam.id && <span className="winner-badge">W</span>}
+                        </strong>
                         {match.blackTeam.playerIds && match.blackTeam.playerIds.length > 0 ? (
                           <ul>
                             {match.blackTeam.playerIds.map((playerId) => (

@@ -10,8 +10,6 @@ function PlayersPage() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    phone: '',
   });
 
   useEffect(() => {
@@ -51,7 +49,7 @@ function PlayersPage() {
 
     try {
       await apiService.createPlayer(formData);
-      setFormData({ name: '', email: '', phone: '' });
+      setFormData({ name: '' });
       setShowForm(false);
       await fetchPlayers(); // Refresh the list
     } catch (err) {
@@ -114,30 +112,6 @@ function PlayersPage() {
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="email">Correo electrónico</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Ingresa la dirección de correo electrónico"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="phone">Teléfono</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="Ingresa el número de teléfono"
-                />
-              </div>
-
               <button type="submit" className="submit-button">
                 Crear Jugador
               </button>
@@ -159,8 +133,6 @@ function PlayersPage() {
                 <thead>
                   <tr>
                     <th>Nombre</th>
-                    <th>Correo electrónico</th>
-                    <th>Teléfono</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -168,8 +140,6 @@ function PlayersPage() {
                   {players.map((player) => (
                     <tr key={player.id}>
                       <td>{player.name}</td>
-                      <td>{player.email || '-'}</td>
-                      <td>{player.phone || '-'}</td>
                       <td>
                         <button
                           className="delete-button"
