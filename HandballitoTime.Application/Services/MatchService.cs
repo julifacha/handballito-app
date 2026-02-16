@@ -129,6 +129,7 @@ public partial class MatchService : IMatchService
             .Include(m => m.WhiteTeam).ThenInclude(t => t.Players)
             .Include(m => m.BlackTeam).ThenInclude(t => t.Players)
             .Include(m => m.Location)
+            .OrderByDescending(m => m.Date)
             .ToListAsync();
 
         return matches.Select(m => m.ToDto()).ToList();
