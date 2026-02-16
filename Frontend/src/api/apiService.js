@@ -50,6 +50,15 @@ export const apiService = {
     }
   },
 
+  async getPlayerStats(id) {
+    try {
+      const response = await apiClient.get(`/players/${id}/stats`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   // Locations endpoints
   async getLocations() {
     try {
@@ -136,6 +145,25 @@ export const apiService = {
   async deleteMatch(id) {
     try {
       const response = await apiClient.delete(`/matches/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Stats endpoints
+  async getLeaderboard() {
+    try {
+      const response = await apiClient.get('/stats/leaderboard');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async getMatchStats() {
+    try {
+      const response = await apiClient.get('/stats/matches');
       return response.data;
     } catch (error) {
       throw error;

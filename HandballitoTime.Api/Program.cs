@@ -3,6 +3,7 @@ using HandballitoTime.Api.Endpoints;
 using HandballitoTime.Application.Dtos.Locations;
 using HandballitoTime.Application.Dtos.Matches;
 using HandballitoTime.Application.Dtos.Players;
+using HandballitoTime.Application.Dtos.Stats;
 using HandballitoTime.Application.Services;
 using HandballitoTime.Application.Services.Interfaces;
 using HandballitoTime.Infrastructure;
@@ -26,6 +27,7 @@ builder.Services.Configure<RouteOptions>(options => options.SetParameterPolicy<R
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IStatsService, StatsService>();
 
 // Telegram bot
 builder.Services.Configure<TelegramOptions>(builder.Configuration.GetSection("Telegram"));
@@ -63,6 +65,7 @@ app.MapMatchesEndpoints();
 app.MapPlayersEndpoints();
 app.MapLocationsEndpoints();
 app.MapTelegramEndpoints();
+app.MapStatsEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
@@ -107,6 +110,16 @@ await app.RunAsync();
 [JsonSerializable(typeof(ExtractedMatchData))]
 [JsonSerializable(typeof(CreatePlayerDto))]
 [JsonSerializable(typeof(PlayerDto))]
+[JsonSerializable(typeof(PlayerStatsDto))]
+[JsonSerializable(typeof(PlayerMatchDto))]
+[JsonSerializable(typeof(TeammateDto))]
+[JsonSerializable(typeof(LeaderboardDto))]
+[JsonSerializable(typeof(PlayerRankingDto))]
+[JsonSerializable(typeof(PlayerStreakDto))]
+[JsonSerializable(typeof(MatchStatsDto))]
+[JsonSerializable(typeof(PairStatsDto))]
+[JsonSerializable(typeof(MonthlyGamesDto))]
+[JsonSerializable(typeof(LocationStatsDto))]
 [JsonSerializable(typeof(CreateLocationDto))]
 [JsonSerializable(typeof(UpdateLocationDto))]
 [JsonSerializable(typeof(LocationDto))]

@@ -26,6 +26,18 @@ function LandingPage() {
             <h2>Partidos</h2>
             <p>Crea y gestiona partidos. Programa juegos, asigna equipos y selecciona canchas.</p>
           </Link>
+
+          <Link to="/leaderboard" className="feature-card">
+            <div className="card-icon">🏆</div>
+            <h2>Leaderboard</h2>
+            <p>Rankings de jugadores. Mas partidos, mas victorias, mejor porcentaje y rachas actuales.</p>
+          </Link>
+
+          <Link to="/stats" className="feature-card">
+            <div className="card-icon">📊</div>
+            <h2>Estadisticas</h2>
+            <p>Graficos y datos agregados. Mejores duplas, partidos por mes y por cancha.</p>
+          </Link>
         </div>
       </div>
     </div>

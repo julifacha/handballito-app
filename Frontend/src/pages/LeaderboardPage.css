@@ -1,0 +1,191 @@
+.leaderboard-page {
+  min-height: 100vh;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.leaderboard-page .page-header {
+  margin-bottom: 2rem;
+}
+
+.leaderboard-page .back-button {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #646cff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.leaderboard-page .back-button:hover {
+  color: #535bf2;
+}
+
+.leaderboard-page .page-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #646cff;
+}
+
+.leaderboard-page .page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.leaderboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.leaderboard-section h2 {
+  margin: 0 0 0.5rem;
+  color: #646cff;
+  font-size: 1.3rem;
+}
+
+.section-note {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.leaderboard-section .table-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+
+.leaderboard-section table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-section thead {
+  background-color: rgba(100, 108, 255, 0.1);
+}
+
+.leaderboard-section th {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #646cff;
+  border-bottom: 2px solid rgba(100, 108, 255, 0.3);
+  font-size: 0.85rem;
+}
+
+.leaderboard-section td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.leaderboard-section tr:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.leaderboard-section td a {
+  color: #646cff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.leaderboard-section td a:hover {
+  color: #535bf2;
+}
+
+.rank {
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-weight: 600;
+  width: 2rem;
+}
+
+.value {
+  font-weight: 700;
+}
+
+.secondary {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.empty-cell {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-style: italic;
+  padding: 1.5rem !important;
+}
+
+.streak-badge {
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+}
+
+.streak-win {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+}
+
+.streak-loss {
+  background: rgba(244, 67, 54, 0.15);
+  color: #f44336;
+}
+
+.leaderboard-page .loading,
+.leaderboard-page .empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.leaderboard-page .error-message {
+  padding: 1rem;
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 8px;
+  color: #f44336;
+}
+
+@media (max-width: 768px) {
+  .leaderboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .leaderboard-section .table-container {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .leaderboard-section td {
+    color: rgba(0, 0, 0, 0.9);
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .leaderboard-section tr:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .rank {
+    color: rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .secondary {
+    color: rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .empty-cell {
+    color: rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .section-note {
+    color: rgba(0, 0, 0, 0.4);
+  }
+}

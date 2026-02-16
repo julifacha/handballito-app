@@ -139,7 +139,7 @@ function PlayersPage() {
                 <tbody>
                   {players.map((player) => (
                     <tr key={player.id}>
-                      <td>{player.name}</td>
+                      <td><Link to={`/players/${player.id}`}>{player.name}</Link></td>
                       <td>
                         <button
                           className="delete-button"

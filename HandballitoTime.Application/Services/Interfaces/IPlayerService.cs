@@ -7,5 +7,6 @@ namespace HandballitoTime.Application.Services.Interfaces
         Task<PlayerDto> AddPlayerAsync(CreatePlayerDto dto);
         Task<PlayerDto?> GetPlayerAsync(Guid id);
         Task<List<PlayerDto>> ListPlayersAsync();
+        Task<PlayerStatsDto?> GetPlayerStatsAsync(Guid id);
     }
 }

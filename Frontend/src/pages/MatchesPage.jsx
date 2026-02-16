@@ -145,7 +145,10 @@ function MatchesPage() {
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-    const date = new Date(dateString);
+
+    const [year, month, day] = dateString.split('-');
+    const date = new Date(year, month - 1, day); // local time
+
     return date.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',

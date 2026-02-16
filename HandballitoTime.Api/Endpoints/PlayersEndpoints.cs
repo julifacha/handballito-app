@@ -27,6 +27,12 @@ public static class PlayersEndpoints
             return Results.Ok(players);
         });
 
+        group.MapGet("/{id:guid}/stats", async (IPlayerService service, Guid id) =>
+        {
+            var stats = await service.GetPlayerStatsAsync(id);
+            return stats is null ? Results.NotFound() : Results.Ok(stats);
+        });
+
         return group;
     }
 }

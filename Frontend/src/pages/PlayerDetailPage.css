@@ -1,0 +1,300 @@
+.player-detail-page {
+  min-height: 100vh;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.player-detail-page .page-header {
+  margin-bottom: 2rem;
+}
+
+.player-detail-page .back-button {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #646cff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.player-detail-page .back-button:hover {
+  color: #535bf2;
+}
+
+.player-detail-page .page-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #646cff;
+}
+
+.player-detail-page .page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.stat-win {
+  border-color: rgba(76, 175, 80, 0.4);
+  background: rgba(76, 175, 80, 0.08);
+}
+
+.stat-win .stat-value {
+  color: #4caf50;
+}
+
+.stat-loss {
+  border-color: rgba(244, 67, 54, 0.4);
+  background: rgba(244, 67, 54, 0.08);
+}
+
+.stat-loss .stat-value {
+  color: #f44336;
+}
+
+.stat-draw {
+  border-color: rgba(255, 193, 7, 0.4);
+  background: rgba(255, 193, 7, 0.08);
+}
+
+.stat-draw .stat-value {
+  color: #ffc107;
+}
+
+/* Sections */
+.section h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #646cff;
+}
+
+/* Teammates */
+.teammates-list {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.teammate-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.teammate-item:last-child {
+  border-bottom: none;
+}
+
+.teammate-name {
+  color: #646cff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.teammate-name:hover {
+  color: #535bf2;
+}
+
+.teammate-count {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+/* Match History */
+.match-history {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.history-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.history-date {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.result-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.result-win {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+}
+
+.result-loss {
+  background: rgba(244, 67, 54, 0.15);
+  color: #f44336;
+}
+
+.result-draw {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.history-details {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.history-players {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.history-players strong {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.player-detail-page .loading,
+.player-detail-page .empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.player-detail-page .error-message {
+  padding: 1rem;
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 8px;
+  color: #f44336;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-grid .stat-card:last-child {
+    grid-column: span 2;
+  }
+
+  .history-details {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+  .stat-card {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .stat-value {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .stat-label {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .stat-win {
+    background: rgba(76, 175, 80, 0.06);
+  }
+
+  .stat-loss {
+    background: rgba(244, 67, 54, 0.06);
+  }
+
+  .stat-draw {
+    background: rgba(255, 193, 7, 0.06);
+  }
+
+  .teammates-list {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .teammate-item {
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .teammate-count {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .history-card {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .history-date {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .history-details {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .history-players {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .history-players strong {
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
