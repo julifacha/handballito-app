@@ -15,13 +15,14 @@ public class PlayerRankingDto
     public string PlayerName { get; set; } = default!;
     public int Value { get; set; }
     public double WinRate { get; set; }
+    public int Draws { get; set; }
 }
 
 public class PlayerStreakDto
 {
     public Guid PlayerId { get; set; }
     public string PlayerName { get; set; } = default!;
-    public string StreakType { get; set; } = default!; // "W" or "L"
+    public string StreakType { get; set; } = default!; // "W", "L", or "E"
     public int StreakCount { get; set; }
 }
 

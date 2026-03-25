@@ -39,7 +39,8 @@ public class StatsService : IStatsService
                 PlayerId = p.Id,
                 PlayerName = p.Name,
                 Value = p.Games,
-                WinRate = p.Games > 0 ? Math.Round((double)p.Wins / p.Games * 100, 1) : 0
+                WinRate = p.Games > 0 ? Math.Round((double)p.Wins / p.Games * 100, 1) : 0,
+                Draws = p.Draws
             })
             .ToList();
 
@@ -51,7 +52,8 @@ public class StatsService : IStatsService
                 PlayerId = p.Id,
                 PlayerName = p.Name,
                 Value = p.Wins,
-                WinRate = p.Games > 0 ? Math.Round((double)p.Wins / p.Games * 100, 1) : 0
+                WinRate = p.Games > 0 ? Math.Round((double)p.Wins / p.Games * 100, 1) : 0,
+                Draws = p.Draws
             })
             .ToList();
 
@@ -64,7 +66,8 @@ public class StatsService : IStatsService
                 PlayerId = p.Id,
                 PlayerName = p.Name,
                 Value = p.Games,
-                WinRate = Math.Round((double)p.Wins / p.Games * 100, 1)
+                WinRate = Math.Round((double)p.Wins / p.Games * 100, 1),
+                Draws = p.Draws
             })
             .ToList();
 
@@ -188,6 +191,7 @@ public class StatsService : IStatsService
 
             data.Games++;
             if (isWinner) data.Wins++;
+            else if (match.IsDraw) data.Draws++;
         }
     }
 
@@ -237,10 +241,17 @@ public class StatsService : IStatsService
             if (!onWhite && !onBlack) continue;
 
             if (!match.IsDraw && match.WinnerTeamId == null) continue; // no result yet, skip
-            if (match.IsDraw) break; // draw breaks streak
 
-            var playerTeam = onWhite ? match.WhiteTeam : match.BlackTeam;
-            var result = match.WinnerTeamId == playerTeam.Id ? "W" : "L";
+            string result;
+            if (match.IsDraw)
+            {
+                result = "E";
+            }
+            else
+            {
+                var playerTeam = onWhite ? match.WhiteTeam : match.BlackTeam;
+                result = match.WinnerTeamId == playerTeam.Id ? "W" : "L";
+            }
 
             if (streakType == null)
             {
@@ -266,6 +277,7 @@ public class StatsService : IStatsService
         public string Name { get; set; } = default!;
         public int Games { get; set; }
         public int Wins { get; set; }
+        public int Draws { get; set; }
     }
 
     private class PairData

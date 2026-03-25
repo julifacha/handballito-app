@@ -48,6 +48,7 @@ function LeaderboardPage() {
                     <th>#</th>
                     <th>Jugador</th>
                     <th>Partidos</th>
+                    <th>Emp.</th>
                     <th>% Vic.</th>
                   </tr>
                 </thead>
@@ -57,6 +58,7 @@ function LeaderboardPage() {
                       <td className="rank">{i + 1}</td>
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.value}</td>
+                      <td className="secondary">{p.draws}</td>
                       <td className="secondary">{p.winRate}%</td>
                     </tr>
                   ))}
@@ -75,6 +77,7 @@ function LeaderboardPage() {
                     <th>#</th>
                     <th>Jugador</th>
                     <th>Victorias</th>
+                    <th>Emp.</th>
                     <th>% Vic.</th>
                   </tr>
                 </thead>
@@ -84,6 +87,7 @@ function LeaderboardPage() {
                       <td className="rank">{i + 1}</td>
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.value}</td>
+                      <td className="secondary">{p.draws}</td>
                       <td className="secondary">{p.winRate}%</td>
                     </tr>
                   ))}
@@ -104,6 +108,7 @@ function LeaderboardPage() {
                     <th>Jugador</th>
                     <th>% Vic.</th>
                     <th>Partidos</th>
+                    <th>Emp.</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,6 +118,7 @@ function LeaderboardPage() {
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.winRate}%</td>
                       <td className="secondary">{p.value}</td>
+                      <td className="secondary">{p.draws}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -140,8 +146,8 @@ function LeaderboardPage() {
                       <td className="rank">{i + 1}</td>
                       <td><Link to={`/players/${s.playerId}`}>{s.playerName}</Link></td>
                       <td>
-                        <span className={`streak-badge ${s.streakType === 'W' ? 'streak-win' : 'streak-loss'}`}>
-                          {s.streakCount}{s.streakType === 'W' ? 'V' : 'D'}
+                        <span className={`streak-badge ${s.streakType === 'W' ? 'streak-win' : s.streakType === 'E' ? 'streak-draw' : 'streak-loss'}`}>
+                          {s.streakCount}{s.streakType === 'W' ? 'V' : s.streakType === 'E' ? 'E' : 'D'}
                         </span>
                       </td>
                     </tr>

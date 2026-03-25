@@ -137,6 +137,11 @@
   color: #f44336;
 }
 
+.streak-draw {
+  background: rgba(255, 152, 0, 0.15);
+  color: #ff9800;
+}
+
 .leaderboard-page .loading,
 .leaderboard-page .empty-state {
   text-align: center;
