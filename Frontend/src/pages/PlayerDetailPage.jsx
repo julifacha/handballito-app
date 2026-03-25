@@ -37,6 +37,7 @@ function PlayerDetailPage() {
       case 'Win': return 'result-win';
       case 'Loss': return 'result-loss';
       case 'Draw': return 'result-draw';
+      case 'Pending': return 'result-pending';
       default: return '';
     }
   };
@@ -46,6 +47,7 @@ function PlayerDetailPage() {
       case 'Win': return 'Victoria';
       case 'Loss': return 'Derrota';
       case 'Draw': return 'Empate';
+      case 'Pending': return 'Sin resultado';
       default: return result;
     }
   };

@@ -13,7 +13,8 @@ namespace HandballitoTime.Application.Extensions.Mapping
                 LocationName = match.Location.Name,
                 WhiteTeam = match.WhiteTeam.ToDto(),
                 BlackTeam = match.BlackTeam.ToDto(),
-                WinnerTeamId = match.WinnerTeamId
+                WinnerTeamId = match.WinnerTeamId,
+                IsDraw = match.IsDraw
             };
         }
     }

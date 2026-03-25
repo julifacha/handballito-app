@@ -74,7 +74,9 @@ public static class TelegramEndpoints
         lines.Add($"Date: {match.Date:dd/MM/yyyy}");
         lines.Add($"Location: {match.LocationName}");
 
-        if (data.WinnerTeamName != null)
+        if (data.WinnerTeamName?.ToLowerInvariant() == "empate")
+            lines.Add("Resultado: Empate");
+        else if (data.WinnerTeamName != null)
             lines.Add($"Winner: {data.WinnerTeamName}");
 
         lines.Add("");

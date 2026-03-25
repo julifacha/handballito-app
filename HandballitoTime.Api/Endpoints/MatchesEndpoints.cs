@@ -33,6 +33,12 @@ public static class MatchesEndpoints
             return Results.Ok(matches);
         });
 
+        group.MapDelete("/{id:guid}", async (IMatchService service, Guid id) =>
+        {
+            var deleted = await service.DeleteMatchAsync(id);
+            return deleted ? Results.NoContent() : Results.NotFound();
+        });
+
         group.MapPost("/from-text", async (IMatchService service, CreateMatchFromTextDto dto) =>
         {
             if (string.IsNullOrWhiteSpace(dto.Text))

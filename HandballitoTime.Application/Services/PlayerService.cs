@@ -70,10 +70,14 @@ namespace HandballitoTime.Application.Services
                 var opponentTeam = onWhite ? match.BlackTeam : match.WhiteTeam;
 
                 string result;
-                if (match.WinnerTeamId == null)
+                if (match.IsDraw)
                 {
                     draws++;
                     result = "Draw";
+                }
+                else if (match.WinnerTeamId == null)
+                {
+                    result = "Pending";
                 }
                 else if (match.WinnerTeamId == playerTeam.Id)
                 {

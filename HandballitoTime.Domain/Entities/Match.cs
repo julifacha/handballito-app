@@ -14,6 +14,8 @@ namespace HandballitoTime.Domain.Entities
         public Guid? WinnerTeamId { get; set; }
         public Team? WinnerTeam { get; set; }
 
+        public bool IsDraw { get; set; }
+
         public Guid LocationId { get; set; }
         public Location Location { get; set; } = default!;
     }

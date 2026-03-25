@@ -173,8 +173,10 @@ public class StatsService : IStatsService
         Domain.Entities.Team opponent,
         Dictionary<Guid, PlayerData> playerStats)
     {
+        // Skip matches with no result yet
+        if (!match.IsDraw && match.WinnerTeamId == null) return;
+
         var isWinner = match.WinnerTeamId == team.Id;
-        var isDraw = match.WinnerTeamId == null;
 
         foreach (var player in team.Players)
         {
@@ -234,7 +236,8 @@ public class StatsService : IStatsService
             var onBlack = match.BlackTeam.Players.Any(p => p.Id == playerId);
             if (!onWhite && !onBlack) continue;
 
-            if (match.WinnerTeamId == null) break; // draw breaks streak
+            if (!match.IsDraw && match.WinnerTeamId == null) continue; // no result yet, skip
+            if (match.IsDraw) break; // draw breaks streak
 
             var playerTeam = onWhite ? match.WhiteTeam : match.BlackTeam;
             var result = match.WinnerTeamId == playerTeam.Id ? "W" : "L";

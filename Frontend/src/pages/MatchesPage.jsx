@@ -138,6 +138,23 @@ function MatchesPage() {
     }
   };
 
+  const setMatchResult = async (matchId, winnerTeamId, isDraw) => {
+    try {
+      const match = matches.find(m => m.id === matchId);
+      await apiService.updateMatch(matchId, {
+        date: match.date,
+        winnerTeamId: isDraw ? null : winnerTeamId,
+        isDraw: isDraw,
+        locationId: null,
+        whiteTeamPlayerIds: match.whiteTeam.playerIds,
+        blackTeamPlayerIds: match.blackTeam.playerIds,
+      });
+      fetchMatches();
+    } catch (err) {
+      setError(err.message || 'Error al actualizar el resultado');
+    }
+  };
+
   const getPlayerName = (playerId) => {
     const player = players.find(p => p.id === playerId);
     return player ? player.name : 'Desconocido';
@@ -281,7 +298,10 @@ function MatchesPage() {
               {matches.map((match) => (
                 <div key={match.id} className="match-card">
                   <div className="match-header">
-                    <h3>{formatDate(match.date)}</h3>
+                    <h3>
+                      {formatDate(match.date)}
+                      {match.isDraw && <span className="draw-badge">Empate</span>}
+                    </h3>
                     <button
                       className="delete-button"
                       onClick={() => handleDelete(match.id)}
@@ -292,10 +312,10 @@ function MatchesPage() {
                   <div className="match-details">
                     <p><strong>Cancha:</strong> {match.locationName}</p>
                     <div className="match-teams">
-                      <div className={`team-info ${match.winnerTeamId === match.whiteTeam.id ? 'team-winner' : ''}`}>
+                      <div className={`team-info ${!match.isDraw && match.winnerTeamId === match.whiteTeam.id ? 'team-winner' : ''} ${match.isDraw ? 'team-draw' : ''}`}>
                         <strong>
                           Equipo Blanco
-                          {match.winnerTeamId === match.whiteTeam.id && <span className="winner-badge">W</span>}
+                          {!match.isDraw && match.winnerTeamId === match.whiteTeam.id && <span className="winner-badge">W</span>}
                         </strong>
                         {match.whiteTeam.playerIds && match.whiteTeam.playerIds.length > 0 ? (
                           <ul>
@@ -307,10 +327,10 @@ function MatchesPage() {
                           <p>No hay jugadores asignados</p>
                         )}
                       </div>
-                      <div className={`team-info ${match.winnerTeamId === match.blackTeam.id ? 'team-winner' : ''}`}>
+                      <div className={`team-info ${!match.isDraw && match.winnerTeamId === match.blackTeam.id ? 'team-winner' : ''} ${match.isDraw ? 'team-draw' : ''}`}>
                         <strong>
                           Equipo Negro
-                          {match.winnerTeamId === match.blackTeam.id && <span className="winner-badge">W</span>}
+                          {!match.isDraw && match.winnerTeamId === match.blackTeam.id && <span className="winner-badge">W</span>}
                         </strong>
                         {match.blackTeam.playerIds && match.blackTeam.playerIds.length > 0 ? (
                           <ul>
@@ -323,6 +343,13 @@ function MatchesPage() {
                         )}
                       </div>
                     </div>
+                    {!match.winnerTeamId && !match.isDraw && (
+                      <div className="result-actions">
+                        <button onClick={() => setMatchResult(match.id, match.whiteTeam.id, false)}>Blanco gana</button>
+                        <button onClick={() => setMatchResult(match.id, match.blackTeam.id, false)}>Negro gana</button>
+                        <button onClick={() => setMatchResult(match.id, null, true)}>Empate</button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

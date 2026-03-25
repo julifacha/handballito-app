@@ -63,7 +63,9 @@ public partial class MatchService : IMatchService
             WhiteTeamId = whiteTeam.Id,
             BlackTeamId = blackTeam.Id,
             WhiteTeam = whiteTeam,
-            BlackTeam = blackTeam
+            BlackTeam = blackTeam,
+            IsDraw = dto.IsDraw,
+            WinnerTeamId = dto.IsDraw ? null : dto.WinnerTeamId
         };
 
         _db.Matches.Add(match);
@@ -100,8 +102,15 @@ public partial class MatchService : IMatchService
         match.Date = dto.Date;
         if (dto.LocationId.HasValue)
             match.LocationId = dto.LocationId.Value;
-        if (dto.WinnerTeamId.HasValue)
+        match.IsDraw = dto.IsDraw;
+        if (dto.IsDraw)
+        {
+            match.WinnerTeamId = null;
+        }
+        else if (dto.WinnerTeamId.HasValue)
+        {
             match.WinnerTeamId = dto.WinnerTeamId;
+        }
 
         match.WhiteTeam.Players = players.Where(p => dto.WhiteTeamPlayerIds.Contains(p.Id)).ToList();
         match.BlackTeam.Players = players.Where(p => dto.BlackTeamPlayerIds.Contains(p.Id)).ToList();
@@ -121,6 +130,16 @@ public partial class MatchService : IMatchService
             return null;
 
         return match.ToDto();
+    }
+
+    public async Task<bool> DeleteMatchAsync(Guid id)
+    {
+        var match = await _db.Matches.FindAsync(id);
+        if (match == null) return false;
+
+        _db.Matches.Remove(match);
+        await _db.SaveChangesAsync();
+        return true;
     }
 
     public async Task<List<MatchDto>> ListMatchesAsync()
@@ -168,7 +187,9 @@ public partial class MatchService : IMatchService
             Players = blackTeamPlayers
         };
 
-        Guid? winnerTeamId = extractedData.WinnerTeamName?.ToLowerInvariant() switch
+        var isDraw = extractedData.WinnerTeamName?.ToLowerInvariant() == "empate";
+
+        Guid? winnerTeamId = isDraw ? null : extractedData.WinnerTeamName?.ToLowerInvariant() switch
         {
             "negro" => blackTeam.Id,
             "blanco" => whiteTeam.Id,
@@ -185,7 +206,8 @@ public partial class MatchService : IMatchService
             BlackTeamId = blackTeam.Id,
             WhiteTeam = whiteTeam,
             BlackTeam = blackTeam,
-            WinnerTeamId = winnerTeamId
+            WinnerTeamId = winnerTeamId,
+            IsDraw = isDraw
         };
 
         _db.Matches.Add(match);

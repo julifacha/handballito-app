@@ -289,6 +289,47 @@
   vertical-align: middle;
 }
 
+.team-draw {
+  border: 2px solid #ff9800;
+  background: rgba(255, 152, 0, 0.1);
+}
+
+.draw-badge {
+  display: inline-block;
+  background-color: #ff9800;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.result-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.result-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.result-actions button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .delete-button {
   background-color: #f44336;
   color: white;
@@ -393,6 +434,24 @@
 
   .team-winner {
     background: rgba(76, 175, 80, 0.08);
+  }
+
+  .team-draw {
+    background: rgba(255, 152, 0, 0.08);
+  }
+
+  .result-actions {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .result-actions button {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.03);
+    color: #213547;
+  }
+
+  .result-actions button:hover {
+    background: rgba(0, 0, 0, 0.08);
   }
 }
 
