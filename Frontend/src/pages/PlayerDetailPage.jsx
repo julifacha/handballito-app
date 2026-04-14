@@ -96,9 +96,18 @@ function PlayerDetailPage() {
                   <Link to={`/players/${tm.playerId}`} className="teammate-name">
                     {tm.playerName}
                   </Link>
-                  <span className="teammate-count">
-                    {tm.gamesPlayedTogether} {tm.gamesPlayedTogether === 1 ? 'partido' : 'partidos'} juntos
-                  </span>
+                  <div className="teammate-stats">
+                    <span className="teammate-count">
+                      {tm.gamesPlayedTogether} {tm.gamesPlayedTogether === 1 ? 'partido' : 'partidos'}
+                    </span>
+                    <span className="teammate-record">
+                      <span className="rec-win">{tm.wins}V</span>
+                      {' / '}
+                      <span className="rec-draw">{tm.draws}E</span>
+                      {' / '}
+                      <span className="rec-loss">{tm.losses}D</span>
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>

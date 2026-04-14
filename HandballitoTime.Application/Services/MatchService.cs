@@ -245,7 +245,7 @@ public partial class MatchService : IMatchService
 
         // Line 2: "Negro         Blanco" or "Blanco         Negro" → determine column order
         var headerParts = MultipleSpaces().Split(lines[1])
-            .Select(h => h.Trim().ToLowerInvariant())
+            .Select(h => h.Trim().Trim('.').Trim().ToLowerInvariant())
             .Where(h => h.Length > 0)
             .ToList();
 

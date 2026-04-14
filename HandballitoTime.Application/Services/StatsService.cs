@@ -33,7 +33,6 @@ public class StatsService : IStatsService
 
         var mostGames = allPlayers
             .OrderByDescending(p => p.Games)
-            .Take(10)
             .Select(p => new PlayerRankingDto
             {
                 PlayerId = p.Id,
@@ -46,7 +45,6 @@ public class StatsService : IStatsService
 
         var mostWins = allPlayers
             .OrderByDescending(p => p.Wins)
-            .Take(10)
             .Select(p => new PlayerRankingDto
             {
                 PlayerId = p.Id,
@@ -60,7 +58,6 @@ public class StatsService : IStatsService
         var bestWinRate = allPlayers
             .Where(p => p.Games >= MinGamesForWinRate)
             .OrderByDescending(p => (double)p.Wins / p.Games)
-            .Take(10)
             .Select(p => new PlayerRankingDto
             {
                 PlayerId = p.Id,
@@ -90,7 +87,6 @@ public class StatsService : IStatsService
 
         currentStreaks = currentStreaks
             .OrderByDescending(s => s.StreakCount)
-            .Take(10)
             .ToList();
 
         return new LeaderboardDto

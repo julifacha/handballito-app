@@ -60,7 +60,7 @@ namespace HandballitoTime.Application.Services
                 .ToListAsync();
 
             int wins = 0, losses = 0, draws = 0;
-            var teammateCounter = new Dictionary<Guid, (string Name, int Count)>();
+            var teammateCounter = new Dictionary<Guid, (string Name, int Games, int Wins, int Draws, int Losses)>();
             var recentMatches = new List<PlayerMatchDto>();
 
             foreach (var match in matches)
@@ -108,10 +108,13 @@ namespace HandballitoTime.Application.Services
 
                 foreach (var teammate in playerTeam.Players.Where(p => p.Id != playerId))
                 {
+                    var w = result == "Win" ? 1 : 0;
+                    var d = result == "Draw" ? 1 : 0;
+                    var l = result == "Loss" ? 1 : 0;
                     if (teammateCounter.TryGetValue(teammate.Id, out var existing))
-                        teammateCounter[teammate.Id] = (existing.Name, existing.Count + 1);
+                        teammateCounter[teammate.Id] = (existing.Name, existing.Games + 1, existing.Wins + w, existing.Draws + d, existing.Losses + l);
                     else
-                        teammateCounter[teammate.Id] = (teammate.Name, 1);
+                        teammateCounter[teammate.Id] = (teammate.Name, 1, w, d, l);
                 }
             }
 
@@ -128,13 +131,17 @@ namespace HandballitoTime.Application.Services
                 WinRate = totalGames > 0 ? Math.Round((double)wins / totalGames * 100, 1) : 0,
                 RecentMatches = recentMatches,
                 TopTeammates = teammateCounter
-                    .OrderByDescending(kv => kv.Value.Count)
+                    .OrderByDescending(kv => kv.Value.Games)
                     .Take(5)
                     .Select(kv => new TeammateDto
                     {
                         PlayerId = kv.Key,
                         PlayerName = kv.Value.Name,
-                        GamesPlayedTogether = kv.Value.Count
+                        GamesPlayedTogether = kv.Value.Games,
+                        Wins = kv.Value.Wins,
+                        Draws = kv.Value.Draws,
+                        Losses = kv.Value.Losses,
+                        WinRate = kv.Value.Games > 0 ? Math.Round((double)kv.Value.Wins / kv.Value.Games * 100, 1) : 0
                     })
                     .ToList()
             };

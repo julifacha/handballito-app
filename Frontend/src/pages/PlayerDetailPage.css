@@ -130,10 +130,26 @@
   color: #535bf2;
 }
 
+.teammate-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+
 .teammate-count {
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.9rem;
 }
+
+.teammate-record {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.rec-win  { color: #4caf50; }
+.rec-draw { color: #ff9800; }
+.rec-loss { color: #f44336; }
 
 /* Match History */
 .match-history {
@@ -280,6 +296,10 @@
 
   .teammate-count {
     color: rgba(0, 0, 0, 0.5);
+  }
+
+  .teammate-record {
+    color: rgba(0, 0, 0, 0.35);
   }
 
   .history-card {
