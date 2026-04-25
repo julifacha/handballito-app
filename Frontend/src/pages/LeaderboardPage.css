@@ -85,8 +85,28 @@
   font-size: 0.9rem;
 }
 
+.leaderboard-section tr {
+  transition: background-color 0.15s;
+}
+
 .leaderboard-section tr:hover {
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.leaderboard-section tr.rank-1 {
+  border-left: 3px solid #ffd700;
+}
+
+.leaderboard-section tr.rank-2 {
+  border-left: 3px solid #c0c0c0;
+}
+
+.leaderboard-section tr.rank-3 {
+  border-left: 3px solid #cd7f32;
+}
+
+.search-input {
+  max-width: 300px;
 }
 
 .leaderboard-section td a {
@@ -142,19 +162,10 @@
   color: #ff9800;
 }
 
-.leaderboard-page .loading,
 .leaderboard-page .empty-state {
   text-align: center;
   padding: 3rem;
   color: rgba(255, 255, 255, 0.7);
-}
-
-.leaderboard-page .error-message {
-  padding: 1rem;
-  background-color: rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  border-radius: 8px;
-  color: #f44336;
 }
 
 @media (max-width: 768px) {

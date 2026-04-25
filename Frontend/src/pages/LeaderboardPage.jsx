@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Skeleton, TextInput } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
 import './LeaderboardPage.css';
 
 function LeaderboardPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     fetchLeaderboard();
@@ -14,19 +16,63 @@ function LeaderboardPage() {
 
   const fetchLeaderboard = async () => {
     setLoading(true);
-    setError(null);
     try {
       const result = await apiService.getLeaderboard();
       setData(result);
     } catch (err) {
-      setError(err.message || 'Error al cargar el leaderboard');
+      notifications.show({ title: 'Error', message: err.message || 'Error al cargar el leaderboard', color: 'red' });
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div className="leaderboard-page"><div className="loading">Cargando...</div></div>;
-  if (error) return <div className="leaderboard-page"><div className="error-message">{error}</div></div>;
+  const filterByName = (list) => {
+    if (!search.trim() || !list) return list;
+    return list.filter(p =>
+      p.playerName.toLowerCase().includes(search.toLowerCase())
+    );
+  };
+
+  const filteredData = useMemo(() => {
+    if (!data) return null;
+    return {
+      mostGames: filterByName(data.mostGames),
+      mostWins: filterByName(data.mostWins),
+      bestWinRate: filterByName(data.bestWinRate),
+      currentStreaks: filterByName(data.currentStreaks),
+    };
+  }, [data, search]);
+
+  const SkeletonTable = () => (
+    <div className="leaderboard-section">
+      <Skeleton height={28} width="40%" mb="md" />
+      <div className="table-container">
+        {[...Array(5)].map((_, i) => (
+          <Skeleton key={i} height={36} radius="sm" mb="xs" />
+        ))}
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <div className="leaderboard-page">
+        <div className="page-header">
+          <Link to="/" className="back-button">← Volver al Inicio</Link>
+          <h1>Leaderboard</h1>
+        </div>
+        <div className="page-content">
+          <div className="leaderboard-grid">
+            <SkeletonTable />
+            <SkeletonTable />
+            <SkeletonTable />
+            <SkeletonTable />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!data) return null;
 
   return (
@@ -37,6 +83,14 @@ function LeaderboardPage() {
       </div>
 
       <div className="page-content">
+        <TextInput
+          placeholder="Buscar jugador..."
+          value={search}
+          onChange={(e) => setSearch(e.currentTarget.value)}
+          className="search-input"
+          mb="lg"
+        />
+
         <div className="leaderboard-grid">
           {/* Most Games */}
           <div className="leaderboard-section">
@@ -53,8 +107,10 @@ function LeaderboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.mostGames.map((p, i) => (
-                    <tr key={p.playerId}>
+                  {filteredData.mostGames.length === 0 ? (
+                    <tr><td colSpan={5} className="empty-cell">Sin resultados</td></tr>
+                  ) : filteredData.mostGames.map((p, i) => (
+                    <tr key={p.playerId} className={i < 3 ? `rank-${i + 1}` : ''}>
                       <td className="rank">{i + 1}</td>
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.value}</td>
@@ -82,8 +138,10 @@ function LeaderboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.mostWins.map((p, i) => (
-                    <tr key={p.playerId}>
+                  {filteredData.mostWins.length === 0 ? (
+                    <tr><td colSpan={5} className="empty-cell">Sin resultados</td></tr>
+                  ) : filteredData.mostWins.map((p, i) => (
+                    <tr key={p.playerId} className={i < 3 ? `rank-${i + 1}` : ''}>
                       <td className="rank">{i + 1}</td>
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.value}</td>
@@ -112,8 +170,10 @@ function LeaderboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.bestWinRate.map((p, i) => (
-                    <tr key={p.playerId}>
+                  {filteredData.bestWinRate.length === 0 ? (
+                    <tr><td colSpan={5} className="empty-cell">Sin resultados</td></tr>
+                  ) : filteredData.bestWinRate.map((p, i) => (
+                    <tr key={p.playerId} className={i < 3 ? `rank-${i + 1}` : ''}>
                       <td className="rank">{i + 1}</td>
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.winRate}%</td>
@@ -139,10 +199,10 @@ function LeaderboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.currentStreaks.length === 0 ? (
+                  {filteredData.currentStreaks.length === 0 ? (
                     <tr><td colSpan={3} className="empty-cell">Sin rachas activas</td></tr>
-                  ) : data.currentStreaks.map((s, i) => (
-                    <tr key={s.playerId}>
+                  ) : filteredData.currentStreaks.map((s, i) => (
+                    <tr key={s.playerId} className={i < 3 ? `rank-${i + 1}` : ''}>
                       <td className="rank">{i + 1}</td>
                       <td><Link to={`/players/${s.playerId}`}>{s.playerName}</Link></td>
                       <td>

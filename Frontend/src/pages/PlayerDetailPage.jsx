@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Skeleton } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
 import './PlayerDetailPage.css';
 
@@ -7,7 +9,6 @@ function PlayerDetailPage() {
   const { id } = useParams();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchPlayerStats();
@@ -15,12 +16,11 @@ function PlayerDetailPage() {
 
   const fetchPlayerStats = async () => {
     setLoading(true);
-    setError(null);
     try {
       const data = await apiService.getPlayerStats(id);
       setStats(data);
     } catch (err) {
-      setError(err.message || 'Error al cargar las estadisticas del jugador');
+      notifications.show({ title: 'Error', message: err.message || 'Error al cargar las estadisticas del jugador', color: 'red' });
     } finally {
       setLoading(false);
     }
@@ -52,8 +52,30 @@ function PlayerDetailPage() {
     }
   };
 
-  if (loading) return <div className="player-detail-page"><div className="loading">Cargando...</div></div>;
-  if (error) return <div className="player-detail-page"><div className="error-message">{error}</div></div>;
+  if (loading) {
+    return (
+      <div className="player-detail-page">
+        <div className="page-header">
+          <Link to="/players" className="back-button">← Volver a Jugadores</Link>
+          <Skeleton height={36} width="30%" />
+        </div>
+        <div className="page-content">
+          <div className="stats-grid">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} height={80} radius="md" />
+            ))}
+          </div>
+          <div className="section">
+            <Skeleton height={28} width="40%" mb="md" />
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} height={60} radius="md" mb="sm" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!stats) return null;
 
   return (
@@ -118,6 +140,7 @@ function PlayerDetailPage() {
           <h2>Historial de Partidos</h2>
           {stats.recentMatches.length === 0 ? (
             <div className="empty-state">
+              <div className="empty-icon">⚽</div>
               <p>No se encontraron partidos para este jugador.</p>
             </div>
           ) : (

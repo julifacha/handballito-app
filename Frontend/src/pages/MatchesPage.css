@@ -193,11 +193,42 @@
   color: #646cff;
 }
 
-.loading,
 .empty-state {
   text-align: center;
   padding: 3rem;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-search {
+  flex: 1;
+  max-width: 300px;
+}
+
+.filter-select {
+  min-width: 160px;
+}
+
+.submit-button:disabled,
+.delete-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .matches-grid {
@@ -363,6 +394,18 @@
   }
 
   .match-teams {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+  }
+
+  .filter-search {
+    max-width: 100%;
+  }
+
+  .skeleton-grid {
     grid-template-columns: 1fr;
   }
 }

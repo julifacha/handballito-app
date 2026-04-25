@@ -53,19 +53,10 @@
   padding: 1.5rem;
 }
 
-.stats-page .loading,
 .stats-page .empty-state {
   text-align: center;
   padding: 3rem;
   color: rgba(255, 255, 255, 0.7);
-}
-
-.stats-page .error-message {
-  padding: 1rem;
-  background-color: rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  border-radius: 8px;
-  color: #f44336;
 }
 
 @media (prefers-color-scheme: light) {

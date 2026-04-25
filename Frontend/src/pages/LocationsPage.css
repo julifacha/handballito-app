@@ -117,11 +117,25 @@
   color: #646cff;
 }
 
-.loading,
 .empty-state {
   text-align: center;
   padding: 3rem;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.skeleton-table {
+  padding: 1rem;
+}
+
+.submit-button:disabled,
+.delete-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .table-container {
@@ -155,8 +169,12 @@ td {
   color: rgba(255, 255, 255, 0.9);
 }
 
+tr {
+  transition: background-color 0.15s;
+}
+
 tr:hover {
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .delete-button {

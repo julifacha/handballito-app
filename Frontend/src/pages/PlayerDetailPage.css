@@ -163,6 +163,11 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
+  transition: background-color 0.15s;
+}
+
+.history-card:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .history-header {
@@ -227,20 +232,17 @@
   font-weight: 500;
 }
 
-.player-detail-page .loading,
 .player-detail-page .empty-state {
   text-align: center;
   padding: 3rem;
   color: rgba(255, 255, 255, 0.7);
 }
 
-.player-detail-page .error-message {
-  padding: 1rem;
-  background-color: rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  border-radius: 8px;
-  color: #f44336;
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {

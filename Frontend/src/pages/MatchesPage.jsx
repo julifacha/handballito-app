@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Skeleton, Loader, Collapse, TextInput, Select } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
 import './MatchesPage.css';
 
@@ -7,9 +9,13 @@ function MatchesPage() {
   const [matches, setMatches] = useState([]);
   const [players, setPlayers] = useState([]);
   const [locations, setLocations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [settingResultId, setSettingResultId] = useState(null);
+  const [search, setSearch] = useState('');
+  const [resultFilter, setResultFilter] = useState('all');
   const [formData, setFormData] = useState({
     date: '',
     locationId: '',
@@ -23,15 +29,41 @@ function MatchesPage() {
     fetchLocations();
   }, []);
 
+  const filteredMatches = useMemo(() => {
+    let result = matches;
+
+    if (search.trim()) {
+      const term = search.toLowerCase();
+      result = result.filter(match => {
+        const allPlayerIds = [
+          ...(match.whiteTeam.playerIds || []),
+          ...(match.blackTeam.playerIds || []),
+        ];
+        return allPlayerIds.some(pid => {
+          const player = players.find(p => p.id === pid);
+          return player && player.name.toLowerCase().includes(term);
+        });
+      });
+    }
+
+    if (resultFilter === 'pending') {
+      result = result.filter(m => !m.winnerTeamId && !m.isDraw);
+    } else if (resultFilter === 'decided') {
+      result = result.filter(m => m.winnerTeamId || m.isDraw);
+    } else if (resultFilter === 'draw') {
+      result = result.filter(m => m.isDraw);
+    }
+
+    return result;
+  }, [matches, players, search, resultFilter]);
+
   const fetchMatches = async () => {
     setLoading(true);
-    setError(null);
     try {
       const data = await apiService.getMatches();
       setMatches(data);
     } catch (err) {
-      setError(err.message || 'Error al cargar los partidos');
-      console.error('Error fetching matches:', err);
+      notifications.show({ title: 'Error', message: err.message || 'Error al cargar los partidos', color: 'red' });
     } finally {
       setLoading(false);
     }
@@ -67,15 +99,12 @@ function MatchesPage() {
     setFormData(prev => {
       const teamKey = team === 'white' ? 'whiteTeamPlayers' : 'blackTeamPlayers';
       const otherTeamKey = team === 'white' ? 'blackTeamPlayers' : 'whiteTeamPlayers';
-      
-      // Remove from other team if present
+
       const otherTeam = prev[otherTeamKey].filter(id => id !== playerId);
-      
-      // Toggle in current team
       const currentTeam = prev[teamKey].includes(playerId)
         ? prev[teamKey].filter(id => id !== playerId)
         : [...prev[teamKey], playerId];
-      
+
       return {
         ...prev,
         [teamKey]: currentTeam,
@@ -86,23 +115,23 @@ function MatchesPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    
+
     if (!formData.date) {
-      setError('La fecha es requerida');
+      notifications.show({ title: 'Error', message: 'La fecha es requerida', color: 'red' });
       return;
     }
 
     if (!formData.locationId) {
-      setError('La cancha es requerida');
+      notifications.show({ title: 'Error', message: 'La cancha es requerida', color: 'red' });
       return;
     }
 
     if (formData.whiteTeamPlayers.length === 0 && formData.blackTeamPlayers.length === 0) {
-      setError('Al menos un jugador debe ser asignado a un equipo');
+      notifications.show({ title: 'Error', message: 'Al menos un jugador debe ser asignado a un equipo', color: 'red' });
       return;
     }
 
+    setSubmitting(true);
     try {
       await apiService.createMatch({
         date: formData.date,
@@ -117,10 +146,12 @@ function MatchesPage() {
         blackTeamPlayers: [],
       });
       setShowForm(false);
-      fetchMatches(); // Refresh the list
+      notifications.show({ title: 'Listo', message: 'Partido creado exitosamente', color: 'green' });
+      fetchMatches();
     } catch (err) {
-      setError(err.message || 'Error al crear el partido');
-      console.error('Error creating match:', err);
+      notifications.show({ title: 'Error', message: err.message || 'Error al crear el partido', color: 'red' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -129,16 +160,20 @@ function MatchesPage() {
       return;
     }
 
+    setDeletingId(id);
     try {
       await apiService.deleteMatch(id);
-      fetchMatches(); // Refresh the list
+      notifications.show({ title: 'Listo', message: 'Partido eliminado', color: 'green' });
+      fetchMatches();
     } catch (err) {
-      setError(err.message || 'Error al eliminar el partido');
-      console.error('Error deleting match:', err);
+      notifications.show({ title: 'Error', message: err.message || 'Error al eliminar el partido', color: 'red' });
+    } finally {
+      setDeletingId(null);
     }
   };
 
   const setMatchResult = async (matchId, winnerTeamId, isDraw) => {
+    setSettingResultId(matchId);
     try {
       const match = matches.find(m => m.id === matchId);
       await apiService.updateMatch(matchId, {
@@ -149,9 +184,12 @@ function MatchesPage() {
         whiteTeamPlayerIds: match.whiteTeam.playerIds,
         blackTeamPlayerIds: match.blackTeam.playerIds,
       });
+      notifications.show({ title: 'Listo', message: 'Resultado registrado', color: 'green' });
       fetchMatches();
     } catch (err) {
-      setError(err.message || 'Error al actualizar el resultado');
+      notifications.show({ title: 'Error', message: err.message || 'Error al actualizar el resultado', color: 'red' });
+    } finally {
+      setSettingResultId(null);
     }
   };
 
@@ -162,10 +200,8 @@ function MatchesPage() {
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-
     const [year, month, day] = dateString.split('-');
-    const date = new Date(year, month - 1, day); // local time
-
+    const date = new Date(year, month - 1, day);
     return date.toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
@@ -182,21 +218,15 @@ function MatchesPage() {
 
       <div className="page-content">
         <div className="action-bar">
-          <button 
-            className="primary-button" 
+          <button
+            className="primary-button"
             onClick={() => setShowForm(!showForm)}
           >
             {showForm ? 'Cancelar' : '+ Crear Nuevo Partido'}
           </button>
         </div>
 
-        {error && (
-          <div className="error-message">
-            <strong>Error:</strong> {error}
-          </div>
-        )}
-
-        {showForm && (
+        <Collapse in={showForm}>
           <div className="form-container">
             <h2>Crear Nuevo Partido</h2>
             <form onSubmit={handleSubmit}>
@@ -278,24 +308,63 @@ function MatchesPage() {
                 </div>
               </div>
 
-              <button type="submit" className="submit-button">
-                Crear Partido
+              <button type="submit" className="submit-button" disabled={submitting}>
+                {submitting ? <Loader size="xs" color="white" /> : 'Crear Partido'}
               </button>
             </form>
           </div>
-        )}
+        </Collapse>
 
         <div className="matches-list">
           <h2>Lista de Partidos</h2>
+
+          {!loading && matches.length > 0 && (
+            <div className="filter-bar">
+              <TextInput
+                placeholder="Buscar por jugador..."
+                value={search}
+                onChange={(e) => setSearch(e.currentTarget.value)}
+                className="filter-search"
+              />
+              <Select
+                placeholder="Filtrar resultado"
+                value={resultFilter}
+                onChange={setResultFilter}
+                data={[
+                  { value: 'all', label: 'Todos' },
+                  { value: 'pending', label: 'Pendientes' },
+                  { value: 'decided', label: 'Decididos' },
+                  { value: 'draw', label: 'Empates' },
+                ]}
+                className="filter-select"
+                allowDeselect={false}
+              />
+            </div>
+          )}
+
           {loading ? (
-            <div className="loading">Cargando partidos...</div>
-          ) : matches.length === 0 ? (
+            <div className="skeleton-grid">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} height={200} radius="md" />
+              ))}
+            </div>
+          ) : filteredMatches.length === 0 ? (
             <div className="empty-state">
-              <p>No se encontraron partidos. ¡Crea tu primer partido!</p>
+              {matches.length === 0 ? (
+                <>
+                  <div className="empty-icon">⚽</div>
+                  <p>No se encontraron partidos</p>
+                  <button className="primary-button" onClick={() => setShowForm(true)}>
+                    + Crear primer partido
+                  </button>
+                </>
+              ) : (
+                <p>No se encontraron partidos con los filtros aplicados</p>
+              )}
             </div>
           ) : (
             <div className="matches-grid">
-              {matches.map((match) => (
+              {filteredMatches.map((match) => (
                 <div key={match.id} className="match-card">
                   <div className="match-header">
                     <h3>
@@ -305,8 +374,9 @@ function MatchesPage() {
                     <button
                       className="delete-button"
                       onClick={() => handleDelete(match.id)}
+                      disabled={deletingId === match.id}
                     >
-                      Eliminar
+                      {deletingId === match.id ? <Loader size="xs" color="white" /> : 'Eliminar'}
                     </button>
                   </div>
                   <div className="match-details">
@@ -345,9 +415,15 @@ function MatchesPage() {
                     </div>
                     {!match.winnerTeamId && !match.isDraw && (
                       <div className="result-actions">
-                        <button onClick={() => setMatchResult(match.id, match.whiteTeam.id, false)}>Blanco gana</button>
-                        <button onClick={() => setMatchResult(match.id, match.blackTeam.id, false)}>Negro gana</button>
-                        <button onClick={() => setMatchResult(match.id, null, true)}>Empate</button>
+                        {settingResultId === match.id ? (
+                          <Loader size="sm" color="blue" />
+                        ) : (
+                          <>
+                            <button onClick={() => setMatchResult(match.id, match.whiteTeam.id, false)}>Blanco gana</button>
+                            <button onClick={() => setMatchResult(match.id, match.blackTeam.id, false)}>Negro gana</button>
+                            <button onClick={() => setMatchResult(match.id, null, true)}>Empate</button>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
@@ -362,4 +438,3 @@ function MatchesPage() {
 }
 
 export default MatchesPage;
-

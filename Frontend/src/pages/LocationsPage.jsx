@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Skeleton, Loader, Collapse } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
 import './LocationsPage.css';
 
 function LocationsPage() {
   const [locations, setLocations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -20,13 +23,11 @@ function LocationsPage() {
 
   const fetchLocations = async () => {
     setLoading(true);
-    setError(null);
     try {
       const data = await apiService.getLocations();
       setLocations(data);
     } catch (err) {
-      setError(err.message || 'Error al cargar las canchas');
-      console.error('Error fetching locations:', err);
+      notifications.show({ title: 'Error', message: err.message || 'Error al cargar las canchas', color: 'red' });
     } finally {
       setLoading(false);
     }
@@ -42,21 +43,23 @@ function LocationsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    
+
     if (!formData.name.trim()) {
-      setError('El nombre de la cancha es requerido');
+      notifications.show({ title: 'Error', message: 'El nombre de la cancha es requerido', color: 'red' });
       return;
     }
 
+    setSubmitting(true);
     try {
       await apiService.createLocation(formData);
       setFormData({ name: '', address: '', city: '' });
       setShowForm(false);
-      fetchLocations(); // Refresh the list
+      notifications.show({ title: 'Listo', message: 'Cancha creada exitosamente', color: 'green' });
+      fetchLocations();
     } catch (err) {
-      setError(err.message || 'Error al crear la cancha');
-      console.error('Error creating location:', err);
+      notifications.show({ title: 'Error', message: err.message || 'Error al crear la cancha', color: 'red' });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -65,12 +68,15 @@ function LocationsPage() {
       return;
     }
 
+    setDeletingId(id);
     try {
       await apiService.deleteLocation(id);
-      fetchLocations(); // Refresh the list
+      notifications.show({ title: 'Listo', message: 'Cancha eliminada', color: 'green' });
+      fetchLocations();
     } catch (err) {
-      setError(err.message || 'Error al eliminar la cancha');
-      console.error('Error deleting location:', err);
+      notifications.show({ title: 'Error', message: err.message || 'Error al eliminar la cancha', color: 'red' });
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -83,21 +89,15 @@ function LocationsPage() {
 
       <div className="page-content">
         <div className="action-bar">
-          <button 
-            className="primary-button" 
+          <button
+            className="primary-button"
             onClick={() => setShowForm(!showForm)}
           >
             {showForm ? 'Cancelar' : '+ Agregar Nueva Cancha'}
           </button>
         </div>
 
-        {error && (
-          <div className="error-message">
-            <strong>Error:</strong> {error}
-          </div>
-        )}
-
-        {showForm && (
+        <Collapse in={showForm}>
           <div className="form-container">
             <h2>Crear Nueva Cancha</h2>
             <form onSubmit={handleSubmit}>
@@ -138,20 +138,28 @@ function LocationsPage() {
                 />
               </div>
 
-              <button type="submit" className="submit-button">
-                Crear Cancha
+              <button type="submit" className="submit-button" disabled={submitting}>
+                {submitting ? <Loader size="xs" color="white" /> : 'Crear Cancha'}
               </button>
             </form>
           </div>
-        )}
+        </Collapse>
 
         <div className="locations-list">
           <h2>Lista de Canchas</h2>
           {loading ? (
-            <div className="loading">Cargando canchas...</div>
+            <div className="skeleton-table">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} height={40} radius="sm" mb="sm" />
+              ))}
+            </div>
           ) : locations.length === 0 ? (
             <div className="empty-state">
-              <p>No se encontraron canchas. ¡Crea tu primera cancha!</p>
+              <div className="empty-icon">📍</div>
+              <p>No se encontraron canchas</p>
+              <button className="primary-button" onClick={() => setShowForm(true)}>
+                + Crear primera cancha
+              </button>
             </div>
           ) : (
             <div className="table-container">
@@ -174,8 +182,9 @@ function LocationsPage() {
                         <button
                           className="delete-button"
                           onClick={() => handleDelete(location.id)}
+                          disabled={deletingId === location.id}
                         >
-                          Eliminar
+                          {deletingId === location.id ? <Loader size="xs" color="white" /> : 'Eliminar'}
                         </button>
                       </td>
                     </tr>
@@ -191,4 +200,3 @@ function LocationsPage() {
 }
 
 export default LocationsPage;
-

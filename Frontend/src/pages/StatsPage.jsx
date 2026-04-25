@@ -4,6 +4,8 @@ import {
   BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
+import { Skeleton } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
 import './StatsPage.css';
 
@@ -18,7 +20,6 @@ const CHART_COLORS = {
 function StatsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchStats();
@@ -26,19 +27,41 @@ function StatsPage() {
 
   const fetchStats = async () => {
     setLoading(true);
-    setError(null);
     try {
       const result = await apiService.getMatchStats();
       setData(result);
     } catch (err) {
-      setError(err.message || 'Error al cargar las estadisticas');
+      notifications.show({ title: 'Error', message: err.message || 'Error al cargar las estadisticas', color: 'red' });
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div className="stats-page"><div className="loading">Cargando...</div></div>;
-  if (error) return <div className="stats-page"><div className="error-message">{error}</div></div>;
+  if (loading) {
+    return (
+      <div className="stats-page">
+        <div className="page-header">
+          <Link to="/" className="back-button">← Volver al Inicio</Link>
+          <h1>Estadisticas</h1>
+        </div>
+        <div className="page-content">
+          <div className="chart-section">
+            <Skeleton height={28} width="30%" mb="md" />
+            <Skeleton height={250} radius="md" />
+          </div>
+          <div className="chart-section">
+            <Skeleton height={28} width="30%" mb="md" />
+            <Skeleton height={300} radius="md" />
+          </div>
+          <div className="chart-section">
+            <Skeleton height={28} width="30%" mb="md" />
+            <Skeleton height={300} radius="md" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!data) return null;
 
   const pairData = data.topPairs.map(p => ({
