@@ -15,7 +15,7 @@ import './App.css';
 
 function App() {
   return (
-    <MantineProvider defaultColorScheme="dark">
+    <MantineProvider defaultColorScheme="auto">
       <Notifications position="bottom-right" />
       <Router>
         <div className="App">
