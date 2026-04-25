@@ -27,8 +27,10 @@ function LeaderboardPage() {
   };
 
   const filterByName = (list) => {
-    if (!search.trim() || !list) return list;
-    return list.filter(p =>
+    if (!list) return [];
+    const ranked = list.map((p, i) => ({ ...p, originalRank: i + 1 }));
+    if (!search.trim()) return ranked;
+    return ranked.filter(p =>
       p.playerName.toLowerCase().includes(search.toLowerCase())
     );
   };
@@ -109,9 +111,9 @@ function LeaderboardPage() {
                 <tbody>
                   {filteredData.mostGames.length === 0 ? (
                     <tr><td colSpan={5} className="empty-cell">Sin resultados</td></tr>
-                  ) : filteredData.mostGames.map((p, i) => (
-                    <tr key={p.playerId} className={i < 3 ? `rank-${i + 1}` : ''}>
-                      <td className="rank">{i + 1}</td>
+                  ) : filteredData.mostGames.map((p) => (
+                    <tr key={p.playerId} className={p.originalRank <= 3 ? `rank-${p.originalRank}` : ''}>
+                      <td className="rank">{p.originalRank}</td>
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.value}</td>
                       <td className="secondary">{p.draws}</td>
@@ -140,9 +142,9 @@ function LeaderboardPage() {
                 <tbody>
                   {filteredData.mostWins.length === 0 ? (
                     <tr><td colSpan={5} className="empty-cell">Sin resultados</td></tr>
-                  ) : filteredData.mostWins.map((p, i) => (
-                    <tr key={p.playerId} className={i < 3 ? `rank-${i + 1}` : ''}>
-                      <td className="rank">{i + 1}</td>
+                  ) : filteredData.mostWins.map((p) => (
+                    <tr key={p.playerId} className={p.originalRank <= 3 ? `rank-${p.originalRank}` : ''}>
+                      <td className="rank">{p.originalRank}</td>
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.value}</td>
                       <td className="secondary">{p.draws}</td>
@@ -172,9 +174,9 @@ function LeaderboardPage() {
                 <tbody>
                   {filteredData.bestWinRate.length === 0 ? (
                     <tr><td colSpan={5} className="empty-cell">Sin resultados</td></tr>
-                  ) : filteredData.bestWinRate.map((p, i) => (
-                    <tr key={p.playerId} className={i < 3 ? `rank-${i + 1}` : ''}>
-                      <td className="rank">{i + 1}</td>
+                  ) : filteredData.bestWinRate.map((p) => (
+                    <tr key={p.playerId} className={p.originalRank <= 3 ? `rank-${p.originalRank}` : ''}>
+                      <td className="rank">{p.originalRank}</td>
                       <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
                       <td className="value">{p.winRate}%</td>
                       <td className="secondary">{p.value}</td>
@@ -201,9 +203,9 @@ function LeaderboardPage() {
                 <tbody>
                   {filteredData.currentStreaks.length === 0 ? (
                     <tr><td colSpan={3} className="empty-cell">Sin rachas activas</td></tr>
-                  ) : filteredData.currentStreaks.map((s, i) => (
-                    <tr key={s.playerId} className={i < 3 ? `rank-${i + 1}` : ''}>
-                      <td className="rank">{i + 1}</td>
+                  ) : filteredData.currentStreaks.map((s) => (
+                    <tr key={s.playerId} className={s.originalRank <= 3 ? `rank-${s.originalRank}` : ''}>
+                      <td className="rank">{s.originalRank}</td>
                       <td><Link to={`/players/${s.playerId}`}>{s.playerName}</Link></td>
                       <td>
                         <span className={`streak-badge ${s.streakType === 'W' ? 'streak-win' : s.streakType === 'E' ? 'streak-draw' : 'streak-loss'}`}>
