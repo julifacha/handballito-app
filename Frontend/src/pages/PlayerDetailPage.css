@@ -28,6 +28,33 @@
   color: #646cff;
 }
 
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.player-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.player-avatar-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #535bf2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
 .player-detail-page .page-content {
   display: flex;
   flex-direction: column;

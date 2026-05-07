@@ -82,7 +82,18 @@ function PlayerDetailPage() {
     <div className="player-detail-page">
       <div className="page-header">
         <Link to="/players" className="back-button">← Volver a Jugadores</Link>
-        <h1>{stats.name}</h1>
+        <div className="player-header">
+          {stats.avatarUrl ? (
+            <img src={stats.avatarUrl} alt={stats.nickname || stats.name} className="player-avatar" />
+          ) : (
+            <div className="player-avatar-placeholder">
+              {(stats.nickname || stats.name).charAt(0).toUpperCase()}
+            </div>
+          )}
+          <div className="player-header-info">
+            <h1>{stats.name}{stats.nickname && ` "${stats.nickname}"`}</h1>
+          </div>
+        </div>
       </div>
 
       <div className="page-content">

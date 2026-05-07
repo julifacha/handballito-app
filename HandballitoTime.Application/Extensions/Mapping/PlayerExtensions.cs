@@ -8,6 +8,8 @@
             {
                 Id = player.Id,
                 Name = player.Name,
+                Nickname = player.Nickname,
+                AvatarUrl = player.AvatarUrl,
             };
         }
     }

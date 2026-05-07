@@ -21,9 +21,23 @@ namespace HandballitoTime.Application.Services
             var player = new Player
             {
                 Id = Guid.NewGuid(),
-                Name = dto.Name
+                Name = dto.Name,
+                Nickname = dto.Nickname
             };
             _db.Players.Add(player);
+            await _db.SaveChangesAsync();
+            return player.ToDto();
+        }
+
+        public async Task<PlayerDto?> UpdatePlayerAsync(Guid id, UpdatePlayerDto dto)
+        {
+            var player = await _db.Players.FindAsync(id);
+            if (player == null) return null;
+
+            player.Name = dto.Name;
+            player.Nickname = dto.Nickname;
+            player.AvatarUrl = dto.AvatarUrl;
+
             await _db.SaveChangesAsync();
             return player.ToDto();
         }
@@ -124,6 +138,8 @@ namespace HandballitoTime.Application.Services
             {
                 Id = player.Id,
                 Name = player.Name,
+                Nickname = player.Nickname,
+                AvatarUrl = player.AvatarUrl,
                 TotalGames = totalGames,
                 Wins = wins,
                 Losses = losses,

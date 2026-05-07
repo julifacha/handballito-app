@@ -195,7 +195,8 @@ function MatchesPage() {
 
   const getPlayerName = (playerId) => {
     const player = players.find(p => p.id === playerId);
-    return player ? player.name : 'Desconocido';
+    if (!player) return 'Desconocido';
+    return player.nickname ? `${player.name} "${player.nickname}"` : player.name;
   };
 
   const formatDate = (dateString) => {

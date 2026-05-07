@@ -7,18 +7,25 @@ import './LeaderboardPage.css';
 
 function LeaderboardPage() {
   const [data, setData] = useState(null);
+  const [playerMap, setPlayerMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    fetchLeaderboard();
+    fetchData();
   }, []);
 
-  const fetchLeaderboard = async () => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const result = await apiService.getLeaderboard();
+      const [result, players] = await Promise.all([
+        apiService.getLeaderboard(),
+        apiService.getPlayers(),
+      ]);
       setData(result);
+      const map = {};
+      players.forEach(p => { map[p.id] = p; });
+      setPlayerMap(map);
     } catch (err) {
       notifications.show({ title: 'Error', message: err.message || 'Error al cargar el leaderboard', color: 'red' });
     } finally {
@@ -26,12 +33,20 @@ function LeaderboardPage() {
     }
   };
 
+  const getDisplayName = (playerId, playerName) => {
+    const player = playerMap[playerId];
+    if (player?.nickname) return `${playerName} "${player.nickname}"`;
+    return playerName;
+  };
+
   const filterByName = (list) => {
     if (!list) return [];
     const ranked = list.map((p, i) => ({ ...p, originalRank: i + 1 }));
     if (!search.trim()) return ranked;
+    const q = search.toLowerCase();
     return ranked.filter(p =>
-      p.playerName.toLowerCase().includes(search.toLowerCase())
+      p.playerName.toLowerCase().includes(q) ||
+      (playerMap[p.playerId]?.nickname && playerMap[p.playerId].nickname.toLowerCase().includes(q))
     );
   };
 
@@ -114,7 +129,7 @@ function LeaderboardPage() {
                   ) : filteredData.mostGames.map((p) => (
                     <tr key={p.playerId} className={p.originalRank <= 3 ? `rank-${p.originalRank}` : ''}>
                       <td className="rank">{p.originalRank}</td>
-                      <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
+                      <td><Link to={`/players/${p.playerId}`}>{getDisplayName(p.playerId, p.playerName)}</Link></td>
                       <td className="value">{p.value}</td>
                       <td className="secondary">{p.draws}</td>
                       <td className="secondary">{p.winRate}%</td>
@@ -145,7 +160,7 @@ function LeaderboardPage() {
                   ) : filteredData.mostWins.map((p) => (
                     <tr key={p.playerId} className={p.originalRank <= 3 ? `rank-${p.originalRank}` : ''}>
                       <td className="rank">{p.originalRank}</td>
-                      <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
+                      <td><Link to={`/players/${p.playerId}`}>{getDisplayName(p.playerId, p.playerName)}</Link></td>
                       <td className="value">{p.value}</td>
                       <td className="secondary">{p.draws}</td>
                       <td className="secondary">{p.winRate}%</td>
@@ -177,7 +192,7 @@ function LeaderboardPage() {
                   ) : filteredData.bestWinRate.map((p) => (
                     <tr key={p.playerId} className={p.originalRank <= 3 ? `rank-${p.originalRank}` : ''}>
                       <td className="rank">{p.originalRank}</td>
-                      <td><Link to={`/players/${p.playerId}`}>{p.playerName}</Link></td>
+                      <td><Link to={`/players/${p.playerId}`}>{getDisplayName(p.playerId, p.playerName)}</Link></td>
                       <td className="value">{p.winRate}%</td>
                       <td className="secondary">{p.value}</td>
                       <td className="secondary">{p.draws}</td>
@@ -206,7 +221,7 @@ function LeaderboardPage() {
                   ) : filteredData.currentStreaks.map((s) => (
                     <tr key={s.playerId} className={s.originalRank <= 3 ? `rank-${s.originalRank}` : ''}>
                       <td className="rank">{s.originalRank}</td>
-                      <td><Link to={`/players/${s.playerId}`}>{s.playerName}</Link></td>
+                      <td><Link to={`/players/${s.playerId}`}>{getDisplayName(s.playerId, s.playerName)}</Link></td>
                       <td>
                         <span className={`streak-badge ${s.streakType === 'W' ? 'streak-win' : s.streakType === 'E' ? 'streak-draw' : 'streak-loss'}`}>
                           {s.streakCount}{s.streakType === 'W' ? 'V' : s.streakType === 'E' ? 'E' : 'D'}

@@ -14,6 +14,13 @@ function PlayersPage() {
   const [search, setSearch] = useState('');
   const [formData, setFormData] = useState({
     name: '',
+    nickname: '',
+  });
+  const [editingPlayer, setEditingPlayer] = useState(null);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    nickname: '',
   });
 
   useEffect(() => {
@@ -22,8 +29,10 @@ function PlayersPage() {
 
   const filteredPlayers = useMemo(() => {
     if (!search.trim()) return players;
+    const q = search.toLowerCase();
     return players.filter(p =>
-      p.name.toLowerCase().includes(search.toLowerCase())
+      p.name.toLowerCase().includes(q) ||
+      (p.nickname && p.nickname.toLowerCase().includes(q))
     );
   }, [players, search]);
 
@@ -57,13 +66,56 @@ function PlayersPage() {
 
     setSubmitting(true);
     try {
-      await apiService.createPlayer(formData);
-      setFormData({ name: '' });
+      await apiService.createPlayer({
+        name: formData.name,
+        nickname: formData.nickname || null,
+      });
+      setFormData({ name: '', nickname: '' });
       setShowForm(false);
       notifications.show({ title: 'Listo', message: 'Jugador creado exitosamente', color: 'green' });
       await fetchPlayers();
     } catch (err) {
       notifications.show({ title: 'Error', message: err.message || 'Error al crear el jugador', color: 'red' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleEditClick = (player) => {
+    setEditingPlayer(player);
+    setEditFormData({
+      name: player.name,
+      nickname: player.nickname || '',
+    });
+    setShowEditForm(true);
+  };
+
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!editFormData.name.trim()) {
+      notifications.show({ title: 'Error', message: 'El nombre del jugador es requerido', color: 'red' });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await apiService.updatePlayer(editingPlayer.id, {
+        name: editFormData.name,
+        nickname: editFormData.nickname || null,
+        avatarUrl: editingPlayer.avatarUrl || null,
+      });
+      setShowEditForm(false);
+      setEditingPlayer(null);
+      notifications.show({ title: 'Listo', message: 'Jugador actualizado exitosamente', color: 'green' });
+      await fetchPlayers();
+    } catch (err) {
+      notifications.show({ title: 'Error', message: err.message || 'Error al actualizar el jugador', color: 'red' });
     } finally {
       setSubmitting(false);
     }
@@ -120,9 +172,62 @@ function PlayersPage() {
                 />
               </div>
 
+              <div className="form-group">
+                <label htmlFor="nickname">Apodo (opcional)</label>
+                <input
+                  type="text"
+                  id="nickname"
+                  name="nickname"
+                  value={formData.nickname}
+                  onChange={handleInputChange}
+                  placeholder="Ej: Nano Banana"
+                />
+              </div>
+
               <button type="submit" className="submit-button" disabled={submitting}>
                 {submitting ? <Loader size="xs" color="white" /> : 'Crear Jugador'}
               </button>
+            </form>
+          </div>
+        </Collapse>
+
+        <Collapse in={showEditForm}>
+          <div className="form-container">
+            <h2>Editar Jugador</h2>
+            <form onSubmit={handleEditSubmit}>
+              <div className="form-group">
+                <label htmlFor="edit-name">Nombre *</label>
+                <input
+                  type="text"
+                  id="edit-name"
+                  name="name"
+                  value={editFormData.name}
+                  onChange={handleEditInputChange}
+                  required
+                  placeholder="Ingresa el nombre del jugador"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-nickname">Apodo (opcional)</label>
+                <input
+                  type="text"
+                  id="edit-nickname"
+                  name="nickname"
+                  value={editFormData.nickname}
+                  onChange={handleEditInputChange}
+                  placeholder="Ej: Nano Banana"
+                />
+              </div>
+
+              <div className="form-actions">
+                <button type="submit" className="submit-button" disabled={submitting}>
+                  {submitting ? <Loader size="xs" color="white" /> : 'Guardar Cambios'}
+                </button>
+                <button type="button" className="cancel-button" onClick={() => { setShowEditForm(false); setEditingPlayer(null); }}>
+                  Cancelar
+                </button>
+              </div>
             </form>
           </div>
         </Collapse>
@@ -166,6 +271,7 @@ function PlayersPage() {
                 <thead>
                   <tr>
                     <th>Nombre</th>
+                    <th>Apodo</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -173,7 +279,14 @@ function PlayersPage() {
                   {filteredPlayers.map((player) => (
                     <tr key={player.id}>
                       <td><Link to={`/players/${player.id}`}>{player.name}</Link></td>
+                      <td>{player.nickname ? `"${player.nickname}"` : '—'}</td>
                       <td>
+                        <button
+                          className="edit-button"
+                          onClick={() => handleEditClick(player)}
+                        >
+                          Editar
+                        </button>
                         <button
                           className="delete-button"
                           onClick={() => handleDelete(player.id)}
