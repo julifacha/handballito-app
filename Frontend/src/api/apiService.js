@@ -170,6 +170,15 @@ export const apiService = {
     }
   },
 
+  async getHeadToHead(player1Id, player2Id) {
+    try {
+      const response = await apiClient.get(`/stats/head-to-head?player1=${player1Id}&player2=${player2Id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   // Health check endpoint
   async healthCheck() {
     try {

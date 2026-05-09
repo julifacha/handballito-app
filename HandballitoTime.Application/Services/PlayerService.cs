@@ -10,10 +10,12 @@ namespace HandballitoTime.Application.Services
     public class PlayerService : IPlayerService
     {
         private readonly HandballitoDbContext _db;
+        private readonly IEloService _eloService;
 
-        public PlayerService(HandballitoDbContext db)
+        public PlayerService(HandballitoDbContext db, IEloService eloService)
         {
             _db = db;
+            _eloService = eloService;
         }
 
         public async Task<PlayerDto> AddPlayerAsync(CreatePlayerDto dto)
@@ -134,6 +136,10 @@ namespace HandballitoTime.Application.Services
 
             var totalGames = matches.Count;
 
+            // Load Elo data
+            var playerElo = await _db.Set<PlayerElo>().FirstOrDefaultAsync(e => e.PlayerId == playerId);
+            var eloHistory = await _eloService.GetPlayerEloHistoryAsync(playerId);
+
             return new PlayerStatsDto
             {
                 Id = player.Id,
@@ -145,6 +151,8 @@ namespace HandballitoTime.Application.Services
                 Losses = losses,
                 Draws = draws,
                 WinRate = totalGames > 0 ? Math.Round((double)wins / totalGames * 100, 1) : 0,
+                Elo = playerElo?.CurrentElo ?? 1500,
+                EloHistory = eloHistory,
                 RecentMatches = recentMatches,
                 TopTeammates = teammateCounter
                     .OrderByDescending(kv => kv.Value.Games)

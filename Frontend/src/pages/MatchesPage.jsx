@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Skeleton, Loader, Collapse, TextInput, Select } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
+import PlayerAvatar from '../components/PlayerAvatar';
 import './MatchesPage.css';
 
 function MatchesPage() {
@@ -391,7 +392,7 @@ function MatchesPage() {
                         {match.whiteTeam.playerIds && match.whiteTeam.playerIds.length > 0 ? (
                           <ul>
                             {match.whiteTeam.playerIds.map((playerId) => (
-                              <li key={playerId}>{getPlayerName(playerId)}</li>
+                              <li key={playerId} className="team-player-item"><PlayerAvatar player={players.find(p => p.id === playerId)} size={20} />{getPlayerName(playerId)}</li>
                             ))}
                           </ul>
                         ) : (
@@ -406,7 +407,7 @@ function MatchesPage() {
                         {match.blackTeam.playerIds && match.blackTeam.playerIds.length > 0 ? (
                           <ul>
                             {match.blackTeam.playerIds.map((playerId) => (
-                              <li key={playerId}>{getPlayerName(playerId)}</li>
+                              <li key={playerId} className="team-player-item"><PlayerAvatar player={players.find(p => p.id === playerId)} size={20} />{getPlayerName(playerId)}</li>
                             ))}
                           </ul>
                         ) : (

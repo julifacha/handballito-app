@@ -11,6 +11,8 @@ public class PlayerStatsDto
     public int Losses { get; set; }
     public int Draws { get; set; }
     public double WinRate { get; set; }
+    public int Elo { get; set; }
+    public List<EloHistoryPointDto> EloHistory { get; set; } = new();
     public List<PlayerMatchDto> RecentMatches { get; set; } = new();
     public List<TeammateDto> TopTeammates { get; set; } = new();
 }

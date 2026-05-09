@@ -109,6 +109,12 @@
   max-width: 300px;
 }
 
+.player-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .leaderboard-section td a {
   color: #646cff;
   text-decoration: none;

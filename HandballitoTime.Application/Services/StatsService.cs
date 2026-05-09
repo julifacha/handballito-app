@@ -89,12 +89,36 @@ public class StatsService : IStatsService
             .OrderByDescending(s => s.StreakCount)
             .ToList();
 
+        // Elo ratings from stored PlayerElo records
+        var playerElos = await _db.Set<Domain.Entities.PlayerElo>()
+            .Include(e => e.Player)
+            .ToListAsync();
+
+        var eloRatings = playerElos
+            .Where(e => allPlayers.Any(p => p.Id == e.PlayerId))
+            .OrderByDescending(e => e.CurrentElo)
+            .Select(e =>
+            {
+                var playerData = allPlayers.First(p => p.Id == e.PlayerId);
+                return new PlayerEloDto
+                {
+                    PlayerId = e.PlayerId,
+                    PlayerName = e.Player.Name,
+                    Elo = e.CurrentElo,
+                    GamesPlayed = playerData.Games,
+                    HighestElo = e.HighestElo,
+                    LowestElo = e.LowestElo
+                };
+            })
+            .ToList();
+
         return new LeaderboardDto
         {
             MostGames = mostGames,
             MostWins = mostWins,
             BestWinRate = bestWinRate,
-            CurrentStreaks = currentStreaks
+            CurrentStreaks = currentStreaks,
+            EloRatings = eloRatings
         };
     }
 
@@ -283,5 +307,83 @@ public class StatsService : IStatsService
         public int GamesPlayed { get; set; }
         public int Wins { get; set; }
         public double WinRate { get; set; }
+    }
+
+    public async Task<HeadToHeadDto?> GetHeadToHeadAsync(Guid player1Id, Guid player2Id)
+    {
+        var player1 = await _db.Players.FindAsync(player1Id);
+        var player2 = await _db.Players.FindAsync(player2Id);
+        if (player1 == null || player2 == null) return null;
+
+        var matches = await _db.Matches
+            .Include(m => m.WhiteTeam).ThenInclude(t => t.Players)
+            .Include(m => m.BlackTeam).ThenInclude(t => t.Players)
+            .Include(m => m.Location)
+            .OrderByDescending(m => m.Date)
+            .ToListAsync();
+
+        int p1Wins = 0, p2Wins = 0, draws = 0;
+        var recentMatches = new List<HeadToHeadMatchDto>();
+
+        foreach (var match in matches)
+        {
+            if (!match.IsDraw && match.WinnerTeamId == null) continue;
+
+            var p1OnWhite = match.WhiteTeam.Players.Any(p => p.Id == player1Id);
+            var p1OnBlack = match.BlackTeam.Players.Any(p => p.Id == player1Id);
+            var p2OnWhite = match.WhiteTeam.Players.Any(p => p.Id == player2Id);
+            var p2OnBlack = match.BlackTeam.Players.Any(p => p.Id == player2Id);
+
+            if (!p1OnWhite && !p1OnBlack) continue;
+            if (!p2OnWhite && !p2OnBlack) continue;
+
+            // Must be on opposite teams
+            var p1Team = p1OnWhite ? match.WhiteTeam : match.BlackTeam;
+            var p2Team = p2OnWhite ? match.WhiteTeam : match.BlackTeam;
+            if (p1Team.Id == p2Team.Id) continue;
+
+            string result;
+            if (match.IsDraw)
+            {
+                draws++;
+                result = "Draw";
+            }
+            else if (match.WinnerTeamId == p1Team.Id)
+            {
+                p1Wins++;
+                result = "Win";
+            }
+            else
+            {
+                p2Wins++;
+                result = "Loss";
+            }
+
+            recentMatches.Add(new HeadToHeadMatchDto
+            {
+                MatchId = match.Id,
+                Date = match.Date,
+                LocationName = match.Location.Name,
+                Result = result
+            });
+        }
+
+        var totalGames = p1Wins + p2Wins + draws;
+        if (totalGames == 0) return null;
+
+        return new HeadToHeadDto
+        {
+            Player1Id = player1Id,
+            Player1Name = player1.Name,
+            Player2Id = player2Id,
+            Player2Name = player2.Name,
+            Player1Wins = p1Wins,
+            Player2Wins = p2Wins,
+            Draws = draws,
+            TotalGames = totalGames,
+            Player1WinRate = Math.Round((double)p1Wins / totalGames * 100, 1),
+            Player2WinRate = Math.Round((double)p2Wins / totalGames * 100, 1),
+            RecentMatches = recentMatches
+        };
     }
 }

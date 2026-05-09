@@ -64,7 +64,7 @@
 /* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
@@ -117,6 +117,22 @@
 
 .stat-draw .stat-value {
   color: #ffc107;
+}
+
+.stat-elo {
+  border-color: rgba(100, 108, 255, 0.4);
+  background: rgba(100, 108, 255, 0.08);
+}
+
+.stat-elo .stat-value {
+  color: #646cff;
+}
+
+.chart-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
 }
 
 /* Sections */
@@ -277,10 +293,6 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .stats-grid .stat-card:last-child {
-    grid-column: span 2;
-  }
-
   .history-details {
     flex-direction: column;
     gap: 0.25rem;
@@ -312,6 +324,15 @@
 
   .stat-draw {
     background: rgba(255, 193, 7, 0.06);
+  }
+
+  .stat-elo {
+    background: rgba(100, 108, 255, 0.06);
+  }
+
+  .chart-container {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
   }
 
   .teammates-list {

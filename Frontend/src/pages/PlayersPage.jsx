@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Skeleton, Loader, Collapse, TextInput } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
+import PlayerAvatar from '../components/PlayerAvatar';
 import './PlayersPage.css';
 
 function PlayersPage() {
@@ -278,7 +279,7 @@ function PlayersPage() {
                 <tbody>
                   {filteredPlayers.map((player) => (
                     <tr key={player.id}>
-                      <td><Link to={`/players/${player.id}`}>{player.name}</Link></td>
+                      <td><Link to={`/players/${player.id}`} className="player-name-cell"><PlayerAvatar player={player} size={28} />{player.name}</Link></td>
                       <td>{player.nickname ? `"${player.nickname}"` : '—'}</td>
                       <td>
                         <button

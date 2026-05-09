@@ -6,4 +6,5 @@ public interface IStatsService
 {
     Task<LeaderboardDto> GetLeaderboardAsync();
     Task<MatchStatsDto> GetMatchStatsAsync();
+    Task<HeadToHeadDto?> GetHeadToHeadAsync(Guid player1Id, Guid player2Id);
 }

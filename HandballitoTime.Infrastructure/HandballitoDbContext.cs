@@ -10,6 +10,7 @@ namespace HandballitoTime.Infrastructure
         public DbSet<Team> Teams => Set<Team>();
         public DbSet<Match> Matches => Set<Match>();
         public DbSet<Location> Locations => Set<Location>();
+        public DbSet<PlayerElo> PlayerElos => Set<PlayerElo>();
         
         public HandballitoDbContext(DbContextOptions<HandballitoDbContext> options)
             : base(options) { }
@@ -43,6 +44,16 @@ namespace HandballitoTime.Infrastructure
                 .WithMany(l => l.Matches)
                 .HasForeignKey(m => m.LocationId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PlayerElo>()
+                .HasOne(e => e.Player)
+                .WithOne()
+                .HasForeignKey<PlayerElo>(e => e.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PlayerElo>()
+                .HasIndex(e => e.PlayerId)
+                .IsUnique();
         }
     }
 

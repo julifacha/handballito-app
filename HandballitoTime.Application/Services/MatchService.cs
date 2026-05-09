@@ -12,11 +12,13 @@ namespace HandballitoTime.Application.Services;
 public partial class MatchService : IMatchService
 {
     private readonly HandballitoDbContext _db;
+    private readonly IEloService _eloService;
     private const int FuzzyMatchThreshold = 80;
 
-    public MatchService(HandballitoDbContext db)
+    public MatchService(HandballitoDbContext db, IEloService eloService)
     {
         _db = db;
+        _eloService = eloService;
     }
 
     public async Task<MatchDto> AddMatchAsync(CreateMatchDto dto)
@@ -70,6 +72,7 @@ public partial class MatchService : IMatchService
 
         _db.Matches.Add(match);
         await _db.SaveChangesAsync();
+        await _eloService.RecalculateAllAsync();
         return match.ToDto();
     }
 
@@ -116,6 +119,7 @@ public partial class MatchService : IMatchService
         match.BlackTeam.Players = players.Where(p => dto.BlackTeamPlayerIds.Contains(p.Id)).ToList();
 
         await _db.SaveChangesAsync();
+        await _eloService.RecalculateAllAsync();
         return match.ToDto();
     }
 
@@ -139,6 +143,7 @@ public partial class MatchService : IMatchService
 
         _db.Matches.Remove(match);
         await _db.SaveChangesAsync();
+        await _eloService.RecalculateAllAsync();
         return true;
     }
 
@@ -212,6 +217,7 @@ public partial class MatchService : IMatchService
 
         _db.Matches.Add(match);
         await _db.SaveChangesAsync();
+        await _eloService.RecalculateAllAsync();
 
         return new CreateMatchFromImageResultDto
         {

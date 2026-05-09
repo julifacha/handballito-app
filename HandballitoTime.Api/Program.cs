@@ -28,6 +28,7 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IStatsService, StatsService>();
+builder.Services.AddScoped<IEloService, EloService>();
 
 // Telegram bot
 builder.Services.Configure<TelegramOptions>(builder.Configuration.GetSection("Telegram"));
@@ -123,6 +124,10 @@ await app.RunAsync();
 [JsonSerializable(typeof(CreateLocationDto))]
 [JsonSerializable(typeof(UpdateLocationDto))]
 [JsonSerializable(typeof(LocationDto))]
+[JsonSerializable(typeof(PlayerEloDto))]
+[JsonSerializable(typeof(EloHistoryPointDto))]
+[JsonSerializable(typeof(HeadToHeadDto))]
+[JsonSerializable(typeof(HeadToHeadMatchDto))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }

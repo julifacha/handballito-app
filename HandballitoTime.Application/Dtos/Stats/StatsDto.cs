@@ -7,6 +7,17 @@ public class LeaderboardDto
     public List<PlayerRankingDto> MostWins { get; set; } = new();
     public List<PlayerRankingDto> BestWinRate { get; set; } = new();
     public List<PlayerStreakDto> CurrentStreaks { get; set; } = new();
+    public List<PlayerEloDto> EloRatings { get; set; } = new();
+}
+
+public class PlayerEloDto
+{
+    public Guid PlayerId { get; set; }
+    public string PlayerName { get; set; } = default!;
+    public int Elo { get; set; }
+    public int GamesPlayed { get; set; }
+    public int HighestElo { get; set; }
+    public int LowestElo { get; set; }
 }
 
 public class PlayerRankingDto
@@ -53,4 +64,28 @@ public class LocationStatsDto
 {
     public string LocationName { get; set; } = default!;
     public int GamesCount { get; set; }
+}
+
+// Head-to-Head
+public class HeadToHeadDto
+{
+    public Guid Player1Id { get; set; }
+    public string Player1Name { get; set; } = default!;
+    public Guid Player2Id { get; set; }
+    public string Player2Name { get; set; } = default!;
+    public int Player1Wins { get; set; }
+    public int Player2Wins { get; set; }
+    public int Draws { get; set; }
+    public int TotalGames { get; set; }
+    public double Player1WinRate { get; set; }
+    public double Player2WinRate { get; set; }
+    public List<HeadToHeadMatchDto> RecentMatches { get; set; } = new();
+}
+
+public class HeadToHeadMatchDto
+{
+    public Guid MatchId { get; set; }
+    public DateOnly Date { get; set; }
+    public string LocationName { get; set; } = default!;
+    public string Result { get; set; } = default!; // "Win", "Loss", "Draw" from Player1's perspective
 }

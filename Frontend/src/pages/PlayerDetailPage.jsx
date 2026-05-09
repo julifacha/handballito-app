@@ -2,7 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Skeleton } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, ReferenceLine
+} from 'recharts';
 import { apiService } from '../api/apiService';
+import PlayerAvatar from '../components/PlayerAvatar';
 import './PlayerDetailPage.css';
 
 function PlayerDetailPage() {
@@ -83,13 +88,7 @@ function PlayerDetailPage() {
       <div className="page-header">
         <Link to="/players" className="back-button">← Volver a Jugadores</Link>
         <div className="player-header">
-          {stats.avatarUrl ? (
-            <img src={stats.avatarUrl} alt={stats.nickname || stats.name} className="player-avatar" />
-          ) : (
-            <div className="player-avatar-placeholder">
-              {(stats.nickname || stats.name).charAt(0).toUpperCase()}
-            </div>
-          )}
+          <PlayerAvatar player={stats} size={64} />
           <div className="player-header-info">
             <h1>{stats.name}{stats.nickname && ` "${stats.nickname}"`}</h1>
           </div>
@@ -118,7 +117,54 @@ function PlayerDetailPage() {
             <div className="stat-value">{stats.winRate}%</div>
             <div className="stat-label">% Victorias</div>
           </div>
+          <div className="stat-card stat-elo">
+            <div className="stat-value">{stats.elo}</div>
+            <div className="stat-label">Elo Rating</div>
+          </div>
         </div>
+
+        {stats.eloHistory && stats.eloHistory.length > 1 && (
+          <div className="section">
+            <h2>Historial de Elo</h2>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={stats.eloHistory} margin={{ left: 0, right: 20, top: 5, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fill: 'rgba(255, 255, 255, 0.6)', fontSize: 12 }}
+                    tickFormatter={(d) => {
+                      const [, m, dd] = d.split('-');
+                      return `${dd}/${m}`;
+                    }}
+                  />
+                  <YAxis
+                    tick={{ fill: 'rgba(255, 255, 255, 0.6)', fontSize: 12 }}
+                    domain={['dataMin - 50', 'dataMax + 50']}
+                  />
+                  <Tooltip
+                    contentStyle={{ background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}
+                    labelStyle={{ color: '#fff' }}
+                    formatter={(value) => [value, 'Elo']}
+                    labelFormatter={(d) => {
+                      const [y, m, dd] = d.split('-');
+                      return `${dd}/${m}/${y}`;
+                    }}
+                  />
+                  <ReferenceLine y={1500} stroke="rgba(255,255,255,0.3)" strokeDasharray="5 5" />
+                  <Line
+                    type="monotone"
+                    dataKey="elo"
+                    stroke="#646cff"
+                    strokeWidth={2}
+                    dot={{ fill: '#646cff', r: 3 }}
+                    activeDot={{ r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
 
         {stats.topTeammates.length > 0 && (
           <div className="section">

@@ -20,6 +20,12 @@ public static class StatsEndpoints
             return Results.Ok(stats);
         });
 
+        group.MapGet("/head-to-head", async (IStatsService service, Guid player1, Guid player2) =>
+        {
+            var result = await service.GetHeadToHeadAsync(player1, player2);
+            return result is null ? Results.NotFound() : Results.Ok(result);
+        });
+
         return group;
     }
 }

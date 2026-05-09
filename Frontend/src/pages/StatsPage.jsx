@@ -4,9 +4,10 @@ import {
   BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
-import { Skeleton } from '@mantine/core';
+import { Skeleton, Select, Loader } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
+import PlayerAvatar from '../components/PlayerAvatar';
 import './StatsPage.css';
 
 const CHART_COLORS = {
@@ -20,10 +21,24 @@ const CHART_COLORS = {
 function StatsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [players, setPlayers] = useState([]);
+  const [h2hPlayer1, setH2hPlayer1] = useState(null);
+  const [h2hPlayer2, setH2hPlayer2] = useState(null);
+  const [h2hData, setH2hData] = useState(null);
+  const [h2hLoading, setH2hLoading] = useState(false);
 
   useEffect(() => {
     fetchStats();
+    fetchPlayers();
   }, []);
+
+  useEffect(() => {
+    if (h2hPlayer1 && h2hPlayer2) {
+      fetchHeadToHead();
+    } else {
+      setH2hData(null);
+    }
+  }, [h2hPlayer1, h2hPlayer2]);
 
   const fetchStats = async () => {
     setLoading(true);
@@ -36,6 +51,50 @@ function StatsPage() {
       setLoading(false);
     }
   };
+
+  const fetchPlayers = async () => {
+    try {
+      const result = await apiService.getPlayers();
+      setPlayers(result);
+    } catch (err) {
+      console.error('Error fetching players:', err);
+    }
+  };
+
+  const fetchHeadToHead = async () => {
+    setH2hLoading(true);
+    setH2hData(null);
+    try {
+      const result = await apiService.getHeadToHead(h2hPlayer1, h2hPlayer2);
+      setH2hData(result);
+    } catch (err) {
+      if (err.response?.status !== 404) {
+        notifications.show({ title: 'Error', message: 'Error al cargar cabeza a cabeza', color: 'red' });
+      }
+    } finally {
+      setH2hLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  };
+
+  const getResultLabel = (result) => {
+    switch (result) {
+      case 'Win': return 'Victoria';
+      case 'Loss': return 'Derrota';
+      case 'Draw': return 'Empate';
+      default: return result;
+    }
+  };
+
+  const playerOptions = players.map(p => ({
+    value: p.id,
+    label: p.nickname ? `${p.name} "${p.nickname}"` : p.name,
+  }));
 
   if (loading) {
     return (
@@ -160,6 +219,95 @@ function StatsPage() {
                   <Bar dataKey="gamesCount" fill={CHART_COLORS.primary} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+            </div>
+          )}
+        </div>
+
+        {/* Head-to-Head */}
+        <div className="chart-section">
+          <h2>Cabeza a Cabeza</h2>
+          <div className="h2h-selectors">
+            <Select
+              placeholder="Jugador 1"
+              value={h2hPlayer1}
+              onChange={setH2hPlayer1}
+              data={playerOptions.filter(p => p.value !== h2hPlayer2)}
+              searchable
+              clearable
+              className="h2h-select"
+            />
+            <span className="h2h-vs">VS</span>
+            <Select
+              placeholder="Jugador 2"
+              value={h2hPlayer2}
+              onChange={setH2hPlayer2}
+              data={playerOptions.filter(p => p.value !== h2hPlayer1)}
+              searchable
+              clearable
+              className="h2h-select"
+            />
+          </div>
+
+          {h2hLoading && (
+            <div className="h2h-loading"><Loader size="sm" color="blue" /></div>
+          )}
+
+          {!h2hLoading && h2hPlayer1 && h2hPlayer2 && !h2hData && (
+            <div className="empty-state"><p>No se encontraron partidos entre estos jugadores como rivales.</p></div>
+          )}
+
+          {h2hData && (
+            <div className="h2h-result">
+              <div className="h2h-players">
+                <div className="h2h-player">
+                  <PlayerAvatar player={players.find(p => p.id === h2hData.player1Id)} size={48} />
+                  <span className="h2h-player-name">{h2hData.player1Name}</span>
+                </div>
+                <div className="h2h-score">
+                  <span className="h2h-wins">{h2hData.player1Wins}</span>
+                  <span className="h2h-draws">{h2hData.draws > 0 ? `${h2hData.draws}E` : ''}</span>
+                  <span className="h2h-wins">{h2hData.player2Wins}</span>
+                </div>
+                <div className="h2h-player">
+                  <PlayerAvatar player={players.find(p => p.id === h2hData.player2Id)} size={48} />
+                  <span className="h2h-player-name">{h2hData.player2Name}</span>
+                </div>
+              </div>
+
+              <div className="h2h-bar">
+                {h2hData.player1Wins > 0 && (
+                  <div className="h2h-bar-p1" style={{ flex: h2hData.player1Wins }}>
+                    {h2hData.player1WinRate}%
+                  </div>
+                )}
+                {h2hData.draws > 0 && (
+                  <div className="h2h-bar-draw" style={{ flex: h2hData.draws }}>
+                    {Math.round(h2hData.draws / h2hData.totalGames * 100)}%
+                  </div>
+                )}
+                {h2hData.player2Wins > 0 && (
+                  <div className="h2h-bar-p2" style={{ flex: h2hData.player2Wins }}>
+                    {h2hData.player2WinRate}%
+                  </div>
+                )}
+              </div>
+
+              <div className="h2h-total">{h2hData.totalGames} {h2hData.totalGames === 1 ? 'partido' : 'partidos'} como rivales</div>
+
+              {h2hData.recentMatches.length > 0 && (
+                <div className="h2h-matches">
+                  <h3>Historial</h3>
+                  {h2hData.recentMatches.map(m => (
+                    <div key={m.matchId} className="h2h-match-item">
+                      <span className="h2h-match-date">{formatDate(m.date)}</span>
+                      <span className={`h2h-match-result ${m.result === 'Win' ? 'result-win' : m.result === 'Loss' ? 'result-loss' : 'result-draw'}`}>
+                        {getResultLabel(m.result)}
+                      </span>
+                      <span className="h2h-match-location">{m.locationName}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

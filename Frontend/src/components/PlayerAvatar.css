@@ -1,0 +1,22 @@
+.player-avatar-component {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.player-avatar-placeholder-component {
+  border-radius: 50%;
+  background: #535bf2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+@media (prefers-color-scheme: light) {
+  .player-avatar-placeholder-component {
+    background: #646cff;
+  }
+}
