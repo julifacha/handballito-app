@@ -26,6 +26,7 @@ function StatsPage() {
   const [h2hPlayer2, setH2hPlayer2] = useState(null);
   const [h2hData, setH2hData] = useState(null);
   const [h2hLoading, setH2hLoading] = useState(false);
+  const [h2hNotFound, setH2hNotFound] = useState(false);
 
   useEffect(() => {
     fetchStats();
@@ -37,6 +38,7 @@ function StatsPage() {
       fetchHeadToHead();
     } else {
       setH2hData(null);
+      setH2hNotFound(false);
     }
   }, [h2hPlayer1, h2hPlayer2]);
 
@@ -64,11 +66,14 @@ function StatsPage() {
   const fetchHeadToHead = async () => {
     setH2hLoading(true);
     setH2hData(null);
+    setH2hNotFound(false);
     try {
       const result = await apiService.getHeadToHead(h2hPlayer1, h2hPlayer2);
       setH2hData(result);
     } catch (err) {
-      if (err.response?.status !== 404) {
+      if (err.response?.status === 404) {
+        setH2hNotFound(true);
+      } else {
         notifications.show({ title: 'Error', message: 'Error al cargar cabeza a cabeza', color: 'red' });
       }
     } finally {
@@ -252,8 +257,11 @@ function StatsPage() {
             <div className="h2h-loading"><Loader size="sm" color="blue" /></div>
           )}
 
-          {!h2hLoading && h2hPlayer1 && h2hPlayer2 && !h2hData && (
-            <div className="empty-state"><p>No se encontraron partidos entre estos jugadores como rivales.</p></div>
+          {!h2hLoading && h2hNotFound && (
+            <div className="h2h-empty-state">
+              <span className="h2h-empty-icon">🤝</span>
+              <p>No se encontraron partidos entre estos jugadores como rivales.</p>
+            </div>
           )}
 
           {h2hData && (

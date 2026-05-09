@@ -111,37 +111,6 @@ function LeaderboardPage() {
         />
 
         <div className="leaderboard-grid">
-          {/* Elo Rating */}
-          <div className="leaderboard-section">
-            <h2>Rating Elo</h2>
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Jugador</th>
-                    <th>Elo</th>
-                    <th>Partidos</th>
-                    <th>Max / Min</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.eloRatings.length === 0 ? (
-                    <tr><td colSpan={5} className="empty-cell">Sin resultados</td></tr>
-                  ) : filteredData.eloRatings.map((p) => (
-                    <tr key={p.playerId} className={p.originalRank <= 3 ? `rank-${p.originalRank}` : ''}>
-                      <td className="rank">{p.originalRank}</td>
-                      <td><Link to={`/players/${p.playerId}`} className="player-name-cell"><PlayerAvatar player={playerMap[p.playerId]} size={24} />{getDisplayName(p.playerId, p.playerName)}</Link></td>
-                      <td className="value">{p.elo}</td>
-                      <td className="secondary">{p.gamesPlayed}</td>
-                      <td className="secondary">{p.highestElo} / {p.lowestElo}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
           {/* Most Games */}
           <div className="leaderboard-section">
             <h2>Mas Partidos</h2>
@@ -207,7 +176,7 @@ function LeaderboardPage() {
           {/* Best Win Rate */}
           <div className="leaderboard-section">
             <h2>Mejor % Victorias</h2>
-            <p className="section-note">Minimo 3 partidos</p>
+            <p className="section-note">Minimo 5 partidos</p>
             <div className="table-container">
               <table>
                 <thead>
@@ -260,6 +229,37 @@ function LeaderboardPage() {
                           {s.streakCount}{s.streakType === 'W' ? 'V' : s.streakType === 'E' ? 'E' : 'D'}
                         </span>
                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Elo Rating */}
+          <div className="leaderboard-section">
+            <h2>Rating Elo</h2>
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Jugador</th>
+                    <th>Elo</th>
+                    <th>Partidos</th>
+                    <th>Max / Min</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData.eloRatings.length === 0 ? (
+                    <tr><td colSpan={5} className="empty-cell">Sin resultados</td></tr>
+                  ) : filteredData.eloRatings.map((p) => (
+                    <tr key={p.playerId} className={p.originalRank <= 3 ? `rank-${p.originalRank}` : ''}>
+                      <td className="rank">{p.originalRank}</td>
+                      <td><Link to={`/players/${p.playerId}`} className="player-name-cell"><PlayerAvatar player={playerMap[p.playerId]} size={24} />{getDisplayName(p.playerId, p.playerName)}</Link></td>
+                      <td className="value">{p.elo}</td>
+                      <td className="secondary">{p.gamesPlayed}</td>
+                      <td className="secondary">{p.highestElo} / {p.lowestElo}</td>
                     </tr>
                   ))}
                 </tbody>

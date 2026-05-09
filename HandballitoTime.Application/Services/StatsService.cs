@@ -8,7 +8,7 @@ namespace HandballitoTime.Application.Services;
 public class StatsService : IStatsService
 {
     private readonly HandballitoDbContext _db;
-    private const int MinGamesForWinRate = 3;
+    private const int MinGamesForWinRate = 5;
 
     public StatsService(HandballitoDbContext db)
     {

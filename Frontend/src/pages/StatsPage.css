@@ -59,6 +59,26 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+.h2h-empty-state {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.h2h-empty-state .h2h-empty-icon {
+  display: block;
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.h2h-empty-state p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+}
+
 /* Head-to-Head */
 .h2h-selectors {
   display: flex;
@@ -282,5 +302,14 @@
 
   .h2h-match-item {
     border-bottom-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .h2h-empty-state {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .h2h-empty-state p {
+    color: rgba(0, 0, 0, 0.6);
   }
 }
