@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Skeleton, Loader, Collapse, TextInput, Select } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { apiService } from '../api/apiService';
@@ -17,6 +17,8 @@ function MatchesPage() {
   const [settingResultId, setSettingResultId] = useState(null);
   const [search, setSearch] = useState('');
   const [resultFilter, setResultFilter] = useState('all');
+  const [highlightedId, setHighlightedId] = useState(null);
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     date: '',
     locationId: '',
@@ -29,6 +31,20 @@ function MatchesPage() {
     fetchPlayers();
     fetchLocations();
   }, []);
+
+  useEffect(() => {
+    const targetId = searchParams.get('highlight');
+    if (!targetId || loading) return;
+    if (!matches.some(m => m.id === targetId)) return;
+
+    const el = document.querySelector(`[data-match-id="${targetId}"]`);
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setHighlightedId(targetId);
+    const timeout = setTimeout(() => setHighlightedId(null), 2000);
+    return () => clearTimeout(timeout);
+  }, [searchParams, matches, loading]);
 
   const filteredMatches = useMemo(() => {
     let result = matches;
@@ -367,7 +383,11 @@ function MatchesPage() {
           ) : (
             <div className="matches-grid">
               {filteredMatches.map((match) => (
-                <div key={match.id} className="match-card">
+                <div
+                  key={match.id}
+                  data-match-id={match.id}
+                  className={`match-card ${highlightedId === match.id ? 'highlighted' : ''}`}
+                >
                   <div className="match-header">
                     <h3>
                       {formatDate(match.date)}

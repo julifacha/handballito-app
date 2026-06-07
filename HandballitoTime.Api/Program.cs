@@ -32,6 +32,7 @@ builder.Services.AddScoped<IEloService, EloService>();
 
 // Telegram bot
 builder.Services.Configure<TelegramOptions>(builder.Configuration.GetSection("Telegram"));
+builder.Services.Configure<WebAppOptions>(builder.Configuration.GetSection("WebApp"));
 var telegramToken = builder.Configuration.GetSection("Telegram")["BotToken"];
 if (!string.IsNullOrEmpty(telegramToken))
 {

@@ -18,9 +18,11 @@ public static class TelegramEndpoints
             HttpContext ctx,
             IMatchService matchService,
             IOptions<TelegramOptions> telegramOptions,
+            IOptions<WebAppOptions> webAppOptions,
             ITelegramBotClient botClient) =>
         {
             var options = telegramOptions.Value;
+            var webApp = webAppOptions.Value;
 
             var headerSecret = ctx.Request.Headers["X-Telegram-Bot-Api-Secret-Token"].FirstOrDefault();
             if (!string.IsNullOrEmpty(options.SecretToken) && headerSecret != options.SecretToken)
@@ -46,7 +48,7 @@ public static class TelegramEndpoints
             try
             {
                 var result = await matchService.CreateMatchFromTextAsync(text);
-                var reply = FormatMatchReply(result);
+                var reply = FormatMatchReply(result, webApp.PublicUrl);
                 await botClient.SendMessage(chatId, reply);
             }
             catch (Exception ex) when (ex is KeyNotFoundException or ArgumentException)
@@ -64,7 +66,7 @@ public static class TelegramEndpoints
         return group;
     }
 
-    private static string FormatMatchReply(CreateMatchFromImageResultDto result)
+    private static string FormatMatchReply(CreateMatchFromImageResultDto result, string publicUrl)
     {
         var match = result.Match;
         var data = result.ExtractedData;
@@ -87,6 +89,12 @@ public static class TelegramEndpoints
         {
             lines.Add("");
             lines.Add($"New players created: {string.Join(", ", result.CreatedPlayers)}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(publicUrl))
+        {
+            lines.Add("");
+            lines.Add($"Ver en la app: {publicUrl.TrimEnd('/')}/matches?highlight={match.Id}");
         }
 
         return string.Join("\n", lines);
